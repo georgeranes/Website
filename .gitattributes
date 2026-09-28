@@ -1,0 +1,7 @@
+# Keep line endings consistent, and never alter binary files such as the résumé PDF or photos.
+* text=auto eol=lf
+*.pdf binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary

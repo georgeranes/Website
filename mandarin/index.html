@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中文 Mandarin Decks · George Ranes</title>
+<meta name="description" content="Interactive Mandarin flashcards and character dictionary built by George Ranes.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #F0F2F5;
+    --surface: #FFFFFF;
+    --surface-2: #E7EAEF;
+    --ink: #161A20;
+    --muted: #5C6672;
+    --faint: #8892A0;
+    --line: #D8DDE4;
+    --accent: #1D5E70;
+    --on-accent: #FFFFFF;
+    --shadow: 0 1px 2px rgba(16,24,32,.06), 0 8px 24px rgba(16,24,32,.07);
+    --t1: #C2410C; --t2: #15803D; --t3: #6D28D9; --t4: #BE185D; --t5: #6B7280;
+    --unseen: #A3AEBC; --learning: #C77800; --known: #17794A;
+    --learn-bg: #FDF3E0; --known-bg: #E6F4EC;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1317; --surface: #191E24; --surface-2: #222930;
+      --ink: #E8ECF1; --muted: #9AA5B1; --faint: #7B8694; --line: #2C333B;
+      --accent: #5FB3C4; --on-accent: #0B1418;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+      --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #9CA3AF;
+      --unseen: #6B7684; --learning: #E0A030; --known: #4FC98D;
+      --learn-bg: #33270F; --known-bg: #11301F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1317; --surface: #191E24; --surface-2: #222930;
+    --ink: #E8ECF1; --muted: #9AA5B1; --faint: #7B8694; --line: #2C333B;
+    --accent: #5FB3C4; --on-accent: #0B1418;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #9CA3AF;
+    --unseen: #6B7684; --learning: #E0A030; --known: #4FC98D;
+    --learn-bg: #33270F; --known-bg: #11301F;
+  }
+
+  :root { --gap: 10px; }          /* one rhythm: filters, card and buttons all use it */
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 15px; line-height: 1.5;
+    padding-inline: 16px; padding-block: 0 28px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--gap); }
+
+  /* ---------- top bar ---------- */
+  .top { padding-block: 16px 0; display: flex; flex-direction: column; gap: var(--gap); }
+  .titlebar { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .title { font-family: "Noto Serif SC", Georgia, serif; font-size: 20px; font-weight: 600; margin: 0; }
+  .subtitle { font-size: 13px; color: var(--muted); }
+  .set-note { font-size: 13.5px; color: var(--muted); margin: -4px 0 0; max-width: 62ch; }
+  .spacer { margin-left: auto; }
+
+  .bar { height: 6px; border-radius: 99px; background: var(--surface-2); display: flex; overflow: hidden; }
+  .bar span { display: block; height: 100%; transition: width .25s ease; }
+  .bar .b-known { background: var(--known); }
+  .bar .b-learn { background: var(--learning); }
+  .counts { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; align-items: center; }
+  .counts b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .dot { width: 8px; height: 8px; border-radius: 99px; display: inline-block; vertical-align: -1px; margin-right: 5px; }
+
+  /* ---------- controls ---------- */
+  .filters { display: flex; gap: var(--gap); flex-wrap: wrap; align-items: center; }
+  select, .btn, .chip, input[type="search"] {
+    font: inherit; font-size: 13.5px; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 11px; cursor: pointer;
+  }
+  select { padding-right: 26px; }
+  input[type="search"] { cursor: text; flex: 1 1 240px; min-width: 0; }
+  input[type="search"]:focus { outline: none; border-color: var(--accent); }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .btn:hover, .chip:hover, select:hover { border-color: var(--accent); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .seg button {
+    font: inherit; font-size: 13.5px; border: 0; background: transparent;
+    color: var(--muted); padding: 7px 11px; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+  /* ---------- word list ---------- */
+  #list .top { padding-block: 18px 14px; }
+  #list .subtitle { display: block; margin-top: 4px; }
+  #list .filters { margin-top: 14px; }
+  #list-body { margin-top: 18px; display: flex; flex-direction: column; gap: 22px; }
+  .list-group-title {
+    font-size: 12.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .list-rows { display: flex; flex-direction: column; }
+  .word-row {
+    display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.6fr) auto;
+    gap: 14px; align-items: center; padding: 11px 4px; border-bottom: 1px solid var(--line);
+  }
+  .list-rows .word-row:last-child { border-bottom: 0; }
+  .word-row .hz { font-size: 22px; margin: 0; justify-content: flex-start; }
+  .word-row .hz .ch { font-size: inherit; padding: 0 2px; }
+  .word-row .py-line { font-size: 14.5px; color: var(--muted); flex-wrap: wrap; }
+  .word-row .en { font-size: 14px; color: var(--ink); }
+  .word-row .pill { font-size: 10.5px; white-space: nowrap; }
+  .list-empty { padding: 32px 4px; text-align: center; color: var(--muted); font-size: 14px; }
+  @media (max-width: 620px) {
+    .word-row { grid-template-columns: 1fr auto; grid-template-areas: "hz pill" "py py" "en en"; row-gap: 4px; }
+    .word-row .hz { grid-area: hz; }
+    .word-row .pill { grid-area: pill; justify-self: end; }
+    .word-row .py-line { grid-area: py; }
+    .word-row .en { grid-area: en; }
+  }
+
+  /* ---------- card ---------- */
+  .stage { perspective: 1400px; display: flex; }
+  .card {
+    display: grid; position: relative; flex: 1;
+    min-height: min(52vh, 430px);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; box-shadow: var(--shadow);
+    transform-style: preserve-3d; transition: transform .45s cubic-bezier(.2,.7,.3,1);
+  }
+  .card.flipped { transform: rotateX(180deg); }
+  .face {
+    grid-row: 1; grid-column: 1; min-height: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    padding: 22px 20px 18px;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: visibility 0s linear 210ms;
+  }
+  .face.back { transform: rotateX(180deg); }
+  .card:not(.flipped) .face.back,
+  .card.flipped .face.front { visibility: hidden; }
+  .face-body {
+    flex: 1; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column; justify-content: center; gap: 12px;
+  }
+
+  .face-tag {
+    font-size: 11px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase;
+    color: var(--faint); display: flex; align-items: center; gap: 8px 6px; flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    border-radius: 99px; padding: 3px 8px; border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .pill.unseen { color: var(--unseen); }
+  .pill.learning { color: var(--learning); }
+  .pill.known { color: var(--known); }
+
+  .hz {
+    font-family: "Noto Serif SC", Georgia, serif;
+    font-size: clamp(38px, 11vw, 60px); line-height: 1.3; font-weight: 500;
+    display: flex; flex-wrap: wrap; gap: 0 2px;
+  }
+  .hz.long { font-size: clamp(26px, 6.5vw, 34px); }
+  .hz.small, .hz.long.small { font-size: clamp(24px, 6vw, 30px); }
+  .answer {
+    display: flex; flex-direction: column; gap: 6px;
+    padding-top: 14px; border-top: 1px solid var(--line);
+  }
+  .answer .py-line { font-size: 15px; }
+  .py-line.lead { font-size: 21px; font-weight: 500; }
+  .en-sub { font-size: 19px; font-weight: 500; line-height: 1.4; text-wrap: balance; }
+  .en-reveal { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .reveal {
+    font-size: 14px; padding: 10px 16px; color: var(--muted);
+    border-style: dashed;
+  }
+  .reveal:hover { color: var(--ink); border-style: solid; }
+  .ch {
+    font: inherit; background: none; border: 0; padding: 0 1px; margin: 0;
+    color: inherit; cursor: pointer; border-radius: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  .ch:hover, .ch.active { border-bottom-color: currentColor; background: var(--surface-2); }
+  .ch.punct { cursor: default; }
+  .ch.punct:hover { border-bottom-color: transparent; background: none; }
+
+  .py-line { font-size: 17px; letter-spacing: .01em; display: flex; flex-wrap: wrap; gap: 0 7px; }
+  .en-line { font-size: 21px; font-weight: 500; line-height: 1.4; text-wrap: balance; }
+  .note {
+    font-size: 13.5px; color: var(--muted); background: var(--surface-2);
+    border-radius: 8px; padding: 10px 12px; border-left: 3px solid var(--accent);
+  }
+  .note b { color: var(--ink); font-weight: 600; }
+  .ex { font-size: 14px; color: var(--muted); }
+  .ex .exhz { font-family: "Noto Serif SC", Georgia, serif; font-size: 17px; color: var(--ink); }
+
+  .t1 { color: var(--t1); } .t2 { color: var(--t2); }
+  .t3 { color: var(--t3); } .t4 { color: var(--t4); } .t5 { color: var(--t5); }
+
+  .speak {
+    font: inherit; font-size: 13px; color: var(--muted); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; cursor: pointer;
+    align-self: flex-start;
+  }
+  .speak:hover { border-color: var(--accent); color: var(--ink); }
+
+  /* ---------- actions ---------- */
+  .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--gap); }
+  .act {
+    font: inherit; font-size: 15px; font-weight: 500;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 11px; padding: 16px 8px; cursor: pointer;
+    min-height: 54px;
+  }
+  .act.learn { background: var(--learn-bg); border-color: var(--learning); color: var(--learning); }
+  .act.know { background: var(--known-bg); border-color: var(--known); color: var(--known); }
+  .act.flip { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .act:hover { filter: brightness(1.04); }
+  #study { display: flex; flex-direction: column; gap: var(--gap); }
+  #controls { display: flex; flex-direction: column; gap: var(--gap); }
+  .subacts { display: flex; gap: var(--gap); justify-content: space-between; align-items: center; }
+  .subacts .btn { padding: 11px 18px; font-size: 14px; }
+  .kbd-hint { font-size: 12px; color: var(--faint); }
+  kbd {
+    font: inherit; font-size: 11px; background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+  }
+
+  /* ---------- done screen ---------- */
+  .done {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: var(--shadow); padding: 30px 22px; text-align: center;
+    display: flex; flex-direction: column; gap: 16px; align-items: center;
+  }
+  .done h2 { font-family: "Noto Serif SC", Georgia, serif; font-size: 22px; margin: 0; font-weight: 600; }
+  .tally { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+  .tally div { display: flex; flex-direction: column; gap: 2px; }
+  .tally b { font-size: 26px; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .tally span { font-size: 12px; color: var(--muted); }
+  .done .btn { padding: 11px 16px; font-size: 14.5px; }
+  .primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+  /* ---------- character popover ---------- */
+  .pop-head { display: flex; align-items: center; gap: 10px; }
+  .pop-hz { font-family: "Noto Serif SC", Georgia, serif; font-size: 34px; line-height: 1; }
+  .pop-py { font-size: 19px; font-weight: 500; }
+  .pop-x {
+    margin-left: auto; font: inherit; font-size: 18px; line-height: 1; color: var(--faint);
+    background: none; border: 0; cursor: pointer; padding: 4px 6px; border-radius: 6px;
+  }
+  .pop-x:hover { background: var(--surface-2); color: var(--ink); }
+  .senses { margin: 0; padding-left: 18px; font-size: 14.5px; display: flex; flex-direction: column; gap: 3px; }
+  .pop .note { font-size: 13px; padding: 9px 11px; }
+  .words { display: flex; flex-direction: column; gap: 5px; }
+  .words .lbl { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+  .w { display: flex; gap: 8px; align-items: baseline; font-size: 13.5px; }
+  .w .whz { font-family: "Noto Serif SC", Georgia, serif; font-size: 16px; }
+  .w .wpy { color: var(--muted); }
+  .w .wen { color: var(--muted); margin-left: auto; text-align: right; }
+  .w .mine { color: var(--accent); font-size: 10px; font-weight: 600; letter-spacing: .05em; }
+  .pop-foot { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pop-foot .btn, .pop-foot a.btn { font-size: 12.5px; padding: 6px 10px; text-decoration: none; }
+
+  .scrim { position: fixed; inset: 0; background: rgba(8,12,16,.44); z-index: 30; }
+
+  .cat-tag {
+    font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 3px 8px;
+    white-space: nowrap;
+  }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 2px; }
+  .tabs button {
+    font: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+    background: none; border: 0; border-bottom: 2px solid transparent;
+    padding: 8px 12px; cursor: pointer; margin-bottom: -1px;
+  }
+  .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .tabs button:hover { color: var(--ink); }
+  .sound-list { margin: 0; padding-left: 18px; font-size: 13.5px; display: flex; flex-direction: column; gap: 5px; color: var(--muted); }
+  .sound-list li::marker { color: var(--accent); }
+  .sent { display: flex; flex-direction: column; gap: 2px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .sent:last-child { border-bottom: 0; }
+  .sent .shz { font-family: "Noto Serif SC", Georgia, serif; font-size: 18px; line-height: 1.5; }
+  .sent .spy { font-size: 13px; color: var(--accent); }
+  .sent .sen { font-size: 13.5px; color: var(--muted); }
+  .sent .mine { color: var(--accent); font-size: 10px; font-weight: 600; letter-spacing: .05em; }
+
+  /* ---------- sheet (full entry + legend) ---------- */
+  .sheet {
+    position: fixed; z-index: 50;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(560px, calc(100vw - 28px));
+    max-height: min(84vh, 84svh); overflow-y: auto; overscroll-behavior: contain;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; box-shadow: var(--shadow);
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .sheet h3 {
+    margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px;
+    position: sticky; top: -20px; z-index: 1;
+    background: var(--surface); padding-block: 4px 8px; margin-top: -4px;
+  }
+  .sheet h3 .pop-x { margin-left: auto; }
+  .sheet h4 {
+    margin: 0; font-size: 11px; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .legend-row { display: flex; align-items: center; gap: 9px; font-size: 13.5px; }
+  .legend-grid { display: flex; flex-direction: column; gap: 7px; }
+  .keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 13.5px; align-items: center; }
+
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  :is(button, select, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .bar span, .face { transition: none; }
+  }
+
+  /* ---------- home ---------- */
+  [hidden] { display: none !important; }
+  .home header { padding-block: 34px 20px; }
+  .home h1 {
+    font-family: "Noto Serif SC", Georgia, serif;
+    font-size: clamp(27px, 6vw, 34px); font-weight: 600; margin: 0 0 10px; line-height: 1.2;
+  }
+  .home h1 .han { color: var(--seal); }
+  .home .lede { margin: 0; color: var(--muted); max-width: 62ch; }
+  .totals {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
+  }
+  .totals div { display: flex; flex-direction: column; }
+  .totals b { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .totals span { font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
+  .decks { display: grid; gap: 11px; margin-top: 22px; }
+  .deck {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 4px 14px;
+    align-items: start; text-align: left; width: 100%; font: inherit; color: inherit;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; padding: 15px 17px; box-shadow: var(--shadow);
+  }
+  .deck-actions {
+    grid-column: 2 / span 2; display: flex; gap: 10px; margin-top: 13px;
+    padding-top: 13px; border-top: 1px solid var(--line);
+  }
+  .deck-actions .btn { font-size: 13.5px; padding: 9px 14px; }
+  .deck .num {
+    grid-row: 1 / span 4; font-size: 12px; color: var(--faint);
+    font-variant-numeric: tabular-nums; padding-top: 5px; min-width: 16px;
+  }
+  .deck .name { font-family: "Noto Serif SC", Georgia, serif; font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .deck .count { grid-row: 1; grid-column: 3; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; padding-top: 2px; }
+  .deck .note {
+    grid-column: 2 / span 2; font-size: 13.5px; color: var(--muted);
+    background: none; border: 0; border-radius: 0; padding: 0;   /* not a card note */
+  }
+  .deck .mini { grid-column: 2 / span 2; display: flex; align-items: center; gap: 9px; margin-top: 9px; }
+  .deck .bar { flex: 1; height: 5px; }
+  .deck .pct { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .deck .tags { grid-column: 2 / span 2; display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .deck .tag { font-size: 11px; color: var(--muted); background: var(--surface-2); border-radius: 99px; padding: 3px 9px; white-space: nowrap; }
+  .deck .tag b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .home footer {
+    margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--muted);
+  }
+  .home footer p { margin: 0 0 8px; max-width: 64ch; }
+  .home footer b { color: var(--ink); font-weight: 600; }
+
+  .back-link {
+    font: inherit; font-size: 13.5px; color: var(--muted); background: none;
+    border: 0; padding: 4px 0; cursor: pointer; align-self: start;
+  }
+  .back-link:hover { color: var(--accent); }
+  @media (max-width: 640px) {
+    .kbd-hint { display: none; }            /* no arrow keys on a phone */
+    .subacts .btn { flex: 1; }
+  }
+  @media (max-width: 460px) {
+    .actions { grid-template-columns: 1fr 1fr; }
+    .act.flip { grid-column: 1 / -1; order: -1; }
+    .face { padding: 16px 15px 14px; }
+    /* keep the card and all three buttons on one screen */
+    .top { padding-block: 12px 0; }
+    .title { font-size: 18px; }
+    .filters select { flex: 1 1 calc(50% - var(--gap) / 2); min-width: 0; font-size: 12.5px; padding-inline: 9px 22px; }
+    .seg { width: 100%; }
+    .seg button { flex: 1; }
+    .chip { flex: 1 1 calc(50% - var(--gap) / 2); }
+    .card { min-height: 34vh; }
+    .hz { font-size: clamp(34px, 11vw, 50px); }
+    .act { min-height: 50px; padding: 14px 8px; }
+    body { padding-block: 0 20px; }
+  }
+  /* ---------- link back to the main site ---------- */
+  .site-link { display: inline-block; margin-top: 16px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
+  .site-link:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div id="home" class="home">
+    <a class="site-link" href="../">← George Ranes</a>
+    <header>
+      <h1><span class="han">中文</span> Mandarin Decks</h1>
+      <p class="lede">Every Quizlet set, rebuilt with a tappable character dictionary. Tap any character on a card for its pinyin, meaning, how to say it, the other words it turns up in, and an example sentence.</p>
+      <div class="totals">
+        <div><b id="t-cards">0</b><span>CARDS</span></div>
+        <div><b id="t-sets">0</b><span>SETS</span></div>
+        <div><b id="t-chars">0</b><span>CHARACTERS</span></div>
+        <div><b id="t-known">0</b><span>MARKED KNOWN</span></div>
+      </div>
+    </header>
+    <div class="decks" id="decks"></div>
+    <footer>
+      <p><b>Progress saves in this browser.</b> Grading a card here won't show up on another device — each keeps its own count.</p>
+      <p><b>The character entries are mine, not a dictionary's.</b> Meanings, pronunciation notes and example sentences were written for these decks, so spot-check anything that reads oddly. Every entry links out to Purple Culture for the authoritative version with audio and stroke order.</p>
+      <p><b>Decks are ordered oldest first</b> — roughly the order you learned them.</p>
+    </footer>
+  </div>
+
+  <div id="study" hidden>
+    <div class="top">
+      <button class="back-link" id="back" type="button">← All decks</button>
+      <div class="titlebar">
+        <h1 class="title" id="set-title"></h1>
+        <span class="subtitle" id="position"></span>
+        <span class="spacer"></span>
+        <button class="btn" id="legend-btn" type="button">Legend</button>
+      </div>
+      <div class="bar" aria-hidden="true">
+        <span class="b-known" id="b-known" style="width:0"></span>
+        <span class="b-learn" id="b-learn" style="width:0"></span>
+      </div>
+      <div class="counts" id="counts"></div>
+      <div class="filters">
+        <div class="seg" role="group" aria-label="Which cards to show">
+          <button type="button" data-mode="all" aria-pressed="true">All</button>
+          <button type="button" data-mode="learning" aria-pressed="false">Still learning</button>
+          <button type="button" data-mode="unseen" aria-pressed="false">Unseen</button>
+        </div>
+        <select id="cat" aria-label="Which category"></select>
+        <select id="chunk" aria-label="Which chunk of the deck"></select>
+        <button class="chip" id="t-py" type="button" aria-pressed="true">Pinyin on front</button>
+        <button class="chip" id="t-shuffle" type="button" aria-pressed="false">Shuffle</button>
+      </div>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div id="controls"></div>
+  </div>
+
+  <div id="list" hidden>
+    <div class="top">
+      <button class="back-link" id="list-back" type="button">← All decks</button>
+      <div class="titlebar">
+        <h1 class="title" id="list-title"></h1>
+        <span class="subtitle" id="list-count"></span>
+        <span class="spacer"></span>
+        <button class="btn" id="list-study" type="button">Study this set →</button>
+      </div>
+      <p class="subtitle" id="list-subtitle"></p>
+    </div>
+    <div class="filters">
+      <input id="list-search" type="search" placeholder="Search hanzi, pinyin or English…" aria-label="Search this set">
+      <select id="list-cat" aria-label="Which category"></select>
+    </div>
+    <div id="list-body"></div>
+  </div>
+
+</div>
+
+<!-- Deck data lives in data/ so new sets can be added without touching the app code. -->
+<script src="data/sets.js"></script>
+<script src="data/chars.js"></script>
+<script>
+const KEY = "mandarin-app-progress-v1";
+
+// A set may leave out "cats"; they're then counted from its cards, in first-seen order.
+SETS.forEach(set => {
+  if (set.cats) return;
+  const counts = new Map();
+  set.cards.forEach(c => counts.set(c.cat, (counts.get(c.cat) || 0) + 1));
+  set.cats = [...counts];
+});
+let CARDS = [], CATS = [], SET = null;
+let allStatus = {};
+let orders = {};        // deck id -> card ids in shuffled order (persisted)
+let rank = null;        // card id -> position, for the deck in view
+const CHUNK = 25;
+
+let cardEl = null, flipBtn = null;
+
+const state = {
+  set: null,
+  revealEn: false,
+  showPy: true,
+  mode: "all",
+  chunk: "all",
+  cat: "all",
+  i: 0,
+  flipped: false,
+  status: {},
+  history: [],
+};
+
+/* ---------- persistence ---------- */
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) {
+    const saved = JSON.parse(raw);
+    if (saved && typeof saved === "object") {
+      allStatus = saved.status || {};
+      orders = saved.orders || {};
+      if (typeof saved.showPy === "boolean") state.showPy = saved.showPy;
+    }
+  }
+} catch (e) { /* private window or blocked storage — run without it */ }
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({ status: allStatus, orders: orders, showPy: state.showPy }));
+  } catch (e) { /* ignore */ }
+}
+
+/* ---------- deck ---------- */
+function chunkOf(card) { return Math.floor((card.id - 1) / CHUNK); }
+
+function buildRank() {
+  rank = null;
+  const o = orders[state.set];
+  if (!o) return;
+  rank = new Map();
+  o.forEach((id, i) => rank.set(id, i));
+}
+
+function shuffleDeck() {
+  const ids = CARDS.map(c => c.id);
+  for (let i = ids.length - 1; i > 0; i--) {        // Fisher–Yates
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = ids[i]; ids[i] = ids[j]; ids[j] = t;
+  }
+  orders[state.set] = ids;
+  buildRank();
+  save();
+}
+
+function isShuffled() { return !!orders[state.set]; }
+
+function deck() {
+  const out = CARDS.filter(c => {
+    if (state.cat !== "all" && c.cat !== state.cat) return false;
+    if (state.chunk !== "all" && chunkOf(c) !== Number(state.chunk)) return false;
+    const s = state.status[c.id];
+    if (state.mode === "learning") return s === "learning";
+    if (state.mode === "unseen") return !s;
+    return true;
+  });
+  // the permutation is fixed per deck, so grading a card never reorders the rest
+  if (rank) out.sort((a, b) => rank.get(a.id) - rank.get(b.id));
+  return out;
+}
+
+const el = (tag, cls, text) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+};
+
+/* ---------- speech ---------- */
+let zhVoice = null;
+function pickVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices();
+  zhVoice = vs.find(v => /^zh[-_]?(CN|Hans)/i.test(v.lang))
+         || vs.find(v => /^zh/i.test(v.lang)) || null;
+}
+if ("speechSynthesis" in window) {
+  pickVoice();
+  speechSynthesis.addEventListener("voiceschanged", pickVoice);
+}
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "zh-CN";
+    if (zhVoice) u.voice = zhVoice;
+    u.rate = 0.85;
+    speechSynthesis.speak(u);
+  } catch (e) { /* ignore */ }
+}
+function speakBtn(text, label) {
+  const b = el("button", "speak", (label || "Say it") + " ▶");
+  b.type = "button";
+  b.addEventListener("click", ev => { ev.stopPropagation(); speak(text); });
+  return b;
+}
+
+/* ---------- hanzi rendering with tappable characters ---------- */
+function renderHanzi(card) {
+  const box = el("div", "hz" + (card.hz.length > 6 ? " long" : ""));
+  box.lang = "zh-Hans";
+  let ti = 0;
+  for (const ch of card.hz) {
+    const tok = /[一-鿿]/.test(ch) ? card.toks[ti++] : null;
+    const b = el("button", "ch" + (tok ? "" : " punct"), ch);
+    b.type = "button";
+    if (tok) {
+      if (tok.t) b.classList.add("t" + tok.t);
+      b.setAttribute("aria-label", ch + (tok.p ? ", " + tok.p : "") + " — open character entry");
+      b.addEventListener("click", ev => { ev.stopPropagation(); openPop(ch); });
+    } else {
+      b.tabIndex = -1;
+      b.setAttribute("aria-hidden", "true");
+    }
+    box.append(b);
+  }
+  return box;
+}
+
+function renderPinyin(card) {
+  const box = el("div", "py-line");
+  if (card.toks.length && card.toks[0].p) {
+    for (const t of card.toks) box.append(el("span", "t" + t.t, t.p));
+  } else {
+    box.append(el("span", "t5", card.py));
+  }
+  return box;
+}
+
+/* ---------- card ---------- */
+function statusOf(id) { return state.status[id] || "unseen"; }
+
+function render() {
+  const d = deck();
+  const stage = document.getElementById("stage");
+  const controls = document.getElementById("controls");
+  stage.replaceChildren();
+  controls.replaceChildren();
+  closePop();
+
+  if (!d.length) { renderEmpty(stage); updateBar(); return; }
+  if (state.i >= d.length) { renderDone(stage, d); updateBar(); return; }
+
+  const card = d[state.i];
+  const st = statusOf(card.id);
+  state.revealEn = false;
+
+  const wrap = el("div", "card" + (state.flipped ? " flipped" : ""));
+
+  /* front */
+  const front = el("div", "face front");
+  const ftag = el("div", "face-tag");
+  ftag.append(el("span", null, "Chinese"));
+  const p = el("span", "pill " + st, st === "unseen" ? "new" : st === "learning" ? "learning" : "known");
+  ftag.append(p);
+  ftag.append(el("span", "cat-tag", card.cat));
+  if (card.q === "learning") ftag.append(el("span", "pill learning", "not yet mastered"));
+  const fbody = el("div", "face-body");
+  fbody.append(renderHanzi(card));
+  if (state.showPy) fbody.append(renderPinyin(card));
+  front.append(ftag, fbody, speakBtn(card.hz));
+  wrap.append(front);
+
+  /* back */
+  const back = el("div", "face back");
+  back.append(el("div", "face-tag", "Pinyin"));
+  const bbody = el("div", "face-body");
+  const lead = renderPinyin(card);
+  lead.classList.add("lead");
+  bbody.append(lead);
+  if (card.kind === "pattern" && card.pattern) bbody.append(el("div", "ex", card.pattern));
+  if (card.ex) {
+    const e = el("div", "ex");
+    e.append(el("div", "exhz", card.ex));
+    bbody.append(e);
+  }
+  if (card.flag) {
+    const n = el("div", "note");
+    n.append(el("b", null, "Heads up: "));
+    n.append(document.createTextNode(card.flag));
+    bbody.append(n);
+  }
+
+  const enWrap = el("div", "en-reveal");
+  const showEnglish = () => {
+    state.revealEn = true;
+    enWrap.replaceChildren(el("div", "en-sub", card.en));
+  };
+  if (state.revealEn) showEnglish();
+  else {
+    const rb = el("button", "btn reveal", "Show English");
+    rb.type = "button";
+    rb.addEventListener("click", ev => { ev.stopPropagation(); showEnglish(); });
+    enWrap.append(rb);
+  }
+  bbody.append(enWrap);
+  back.append(bbody, speakBtn(card.hz));
+  wrap.append(back);
+
+  stage.append(wrap);
+  cardEl = wrap;
+
+  /* controls */
+  const acts = el("div", "actions");
+  const learn = el("button", "act learn", "Still learning");
+  learn.type = "button";
+  learn.addEventListener("click", () => grade("learning"));
+  const flip = el("button", "act flip", state.flipped ? "Show Chinese" : "Flip");
+  flip.type = "button";
+  flip.addEventListener("click", doFlip);
+  flipBtn = flip;
+  const know = el("button", "act know", "Know it");
+  know.type = "button";
+  know.addEventListener("click", () => grade("known"));
+  acts.append(learn, flip, know);
+
+  const sub = el("div", "subacts");
+  const undo = el("button", "btn", "Undo");
+  undo.type = "button";
+  undo.disabled = !state.history.length && state.i === 0;
+  undo.addEventListener("click", stepBack);
+  sub.append(undo);
+  sub.append(el("span", "kbd-hint", "← still learning · → know it · ↑↓ flip"));
+
+  controls.append(acts, sub);
+  updateBar();
+}
+
+function renderEmpty(stage) {
+  const d = el("div", "done");
+  d.append(el("h2", null, "Nothing here"));
+  d.append(el("p", "subtitle", "No cards match this filter. Switch back to All, or pick another chunk."));
+  const b = el("button", "btn primary", "Show all cards");
+  b.type = "button";
+  b.addEventListener("click", () => setMode("all"));
+  d.append(b);
+  stage.append(d);
+}
+
+function renderDone(stage, d) {
+  const tal = { known: 0, learning: 0, unseen: 0 };
+  d.forEach(c => tal[statusOf(c.id)]++);
+  const box = el("div", "done");
+  box.append(el("h2", null, "好！End of this run"));
+  const t = el("div", "tally");
+  [["known", "Know it", "--known"], ["learning", "Still learning", "--learning"], ["unseen", "Not graded", "--unseen"]]
+    .forEach(([k, label, cssvar]) => {
+      const c = el("div");
+      const b = el("b", null, String(tal[k]));
+      b.style.color = "var(" + cssvar + ")";
+      c.append(b, el("span", null, label));
+      t.append(c);
+    });
+  box.append(t);
+  if (tal.learning) {
+    const b = el("button", "btn primary", "Review " + tal.learning + " still-learning card" + (tal.learning === 1 ? "" : "s"));
+    b.type = "button";
+    b.addEventListener("click", () => setMode("learning"));
+    box.append(b);
+  }
+  const again = el("button", "btn", "Start over");
+  again.type = "button";
+  again.addEventListener("click", () => {
+    if (isShuffled()) shuffleDeck();        // a fresh order for the next pass
+    state.i = 0; state.flipped = false; state.history = []; render();
+  });
+  box.append(again);
+  stage.append(box);
+}
+
+function updateBar() {
+  const d = deck();
+  const scope = d.length ? d : CARDS;
+  let known = 0, learning = 0;
+  scope.forEach(c => {
+    const s = statusOf(c.id);
+    if (s === "known") known++;
+    else if (s === "learning") learning++;
+  });
+  const n = scope.length || 1;
+  document.getElementById("b-known").style.width = (known / n * 100) + "%";
+  document.getElementById("b-learn").style.width = (learning / n * 100) + "%";
+
+  const counts = document.getElementById("counts");
+  counts.replaceChildren();
+  const bits = [["known", "known", known], ["learning", "still learning", learning],
+                ["unseen", "unseen", scope.length - known - learning]];
+  bits.forEach(([cls, label, num]) => {
+    const s = el("span");
+    const dot = el("span", "dot");
+    dot.style.background = "var(--" + cls + ")";
+    s.append(dot, el("b", null, String(num)), document.createTextNode(" " + label));
+    counts.append(s);
+  });
+
+  const pos = document.getElementById("position");
+  pos.textContent = d.length
+    ? (Math.min(state.i + 1, d.length)) + " of " + d.length
+    : "0 cards";
+}
+
+/* ---------- actions ---------- */
+function doFlip() {
+  if (!cardEl) return;
+  state.flipped = !state.flipped;
+  cardEl.classList.toggle("flipped", state.flipped);
+  if (flipBtn) flipBtn.textContent = state.flipped ? "Show Chinese" : "Flip";
+  closePop();
+}
+
+function grade(value) {
+  const d = deck();
+  if (state.i >= d.length) return;
+  const card = d[state.i];
+  state.history.push({ id: card.id, prev: state.status[card.id] });
+  state.status[card.id] = value;
+  save();
+  state.flipped = false;
+  const after = deck();
+  if (after.some(c => c.id === card.id)) state.i++;
+  if (state.i > after.length) state.i = after.length;
+  render();
+}
+
+function stepBack() {
+  if (state.history.length) {
+    const last = state.history.pop();
+    if (last.prev === undefined) delete state.status[last.id];
+    else state.status[last.id] = last.prev;
+    save();
+    const idx = deck().findIndex(c => c.id === last.id);
+    state.i = idx >= 0 ? idx : Math.max(0, state.i - 1);
+  } else {
+    state.i = Math.max(0, state.i - 1);
+  }
+  state.flipped = false;
+  render();
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  state.i = 0;
+  state.flipped = false;
+  document.querySelectorAll("[data-mode]").forEach(b => {
+    b.setAttribute("aria-pressed", String(b.dataset.mode === mode));
+  });
+  render();
+}
+
+/* ---------- character popover ---------- */
+let popAnchor = null;
+
+function closePop() {
+  if (popAnchor) { popAnchor.classList.remove("active"); popAnchor = null; }
+}
+
+const NARROW = () => window.matchMedia("(max-width: 620px)").matches;
+
+function openPop(ch) {
+  if (CHARS[ch]) openEntry(ch);
+}
+
+function wordRow(word) {
+  const r = el("div", "w");
+  const h = el("span", "whz");
+  h.lang = "zh-Hans";
+  h.textContent = word.hz;
+  r.append(h, el("span", "wpy", word.py));
+  if (word.mine) r.append(el("span", "mine", "IN YOUR DECK"));
+  r.append(el("span", "wen", word.en));
+  return r;
+}
+
+/* ---------- sheets ---------- */
+let sheetEl = null, scrimEl = null, lastFocus = null;
+
+function closeSheet() {
+  if (sheetEl) { sheetEl.remove(); sheetEl = null; }
+  if (scrimEl) { scrimEl.remove(); scrimEl = null; }
+  if (lastFocus) { lastFocus.focus(); lastFocus = null; }
+}
+
+function openSheet(build, label) {
+  closeSheet();
+  lastFocus = document.activeElement;
+  scrimEl = el("div", "scrim");
+  scrimEl.addEventListener("click", closeSheet);
+  sheetEl = el("div", "sheet");
+  sheetEl.setAttribute("role", "dialog");
+  sheetEl.setAttribute("aria-modal", "true");
+  sheetEl.setAttribute("aria-label", label);
+  build(sheetEl);
+  document.body.append(scrimEl, sheetEl);
+  const first = sheetEl.querySelector("button, a");
+  if (first) first.focus();
+}
+
+function sheetHead(sheet, title) {
+  const h = el("h3", null, title);
+  const x = el("button", "pop-x", "✕");
+  x.type = "button";
+  x.setAttribute("aria-label", "Close");
+  x.addEventListener("click", closeSheet);
+  h.append(x);
+  sheet.append(h);
+}
+
+function openEntry(ch, tab) {
+  const info = CHARS[ch];
+  if (!info) return;
+  let active = tab || "dict";
+  openSheet(sheet => {
+    sheetHead(sheet, "Character entry");
+
+    const head = el("div", "pop-head");
+    const hz = el("span", "pop-hz t" + info.t, ch);
+    hz.lang = "zh-Hans";
+    head.append(hz, el("span", "pop-py t" + info.t, info.py), speakBtn(ch, "Say"));
+    head.querySelector(".speak").style.marginLeft = "auto";
+    sheet.append(head);
+
+    const tabs = el("div", "tabs");
+    tabs.setAttribute("role", "tablist");
+    const panel = el("div");
+    const defs = [
+      ["dict", "Dictionary"],
+      ["words", "Words (" + info.words.length + ")"],
+      ["sents", "Sentences (" + info.sents.length + ")"],
+    ];
+    const btns = {};
+    defs.forEach(([key, label]) => {
+      const b = el("button", null, label);
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.addEventListener("click", () => show(key));
+      btns[key] = b;
+      tabs.append(b);
+    });
+
+    function show(key) {
+      active = key;
+      defs.forEach(([k]) => btns[k].setAttribute("aria-selected", String(k === key)));
+      panel.replaceChildren();
+      if (key === "dict") fillDict(panel, ch, info);
+      else if (key === "words") fillWords(panel, ch, info);
+      else fillSents(panel, ch, info);
+    }
+
+    sheet.append(tabs, panel);
+    show(active);
+
+    const foot = el("div", "pop-foot");
+    const link = el("a", "btn", "Open in Purple Culture \u2197");
+    link.href = "https://www.purpleculture.net/dictionary-details/?word=" + encodeURIComponent(ch);
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    foot.append(link);
+    sheet.append(foot);
+  }, "Character entry for " + ch);
+}
+
+function fillDict(panel, ch, info) {
+  panel.append(el("h4", null, "Means"));
+  if (info.senses.length) {
+    const ul = el("ul", "senses");
+    info.senses.forEach(x => ul.append(el("li", null, x)));
+    panel.append(ul);
+  } else {
+    panel.append(el("div", "ex", "No meaning written for this one yet \u2014 the Words and Sentences tabs still show how it behaves, and Purple Culture has the full entry."));
+  }
+
+  if (info.other) {
+    panel.append(el("h4", null, "Other readings"));
+    panel.append(el("div", "ex", info.other));
+  }
+
+  panel.append(el("h4", null, "How to say it"));
+  if (info.watch) {
+    const n = el("div", "note");
+    n.append(el("b", null, "Watch out: "));
+    n.append(document.createTextNode(info.watch));
+    panel.append(n);
+  }
+  const sl = el("ul", "sound-list");
+  info.sound.forEach(x => sl.append(el("li", null, x)));
+  panel.append(sl);
+}
+
+function fillWords(panel, ch, info) {
+  if (!info.words.length) {
+    panel.append(el("div", "ex", "No compounds recorded for this one yet."));
+    return;
+  }
+  panel.append(el("h4", null, "Words using " + ch));
+  const w = el("div", "words");
+  info.words.forEach(word => w.append(wordRow(word)));
+  panel.append(w);
+}
+
+function fillSents(panel, ch, info) {
+  if (!info.sents.length) {
+    panel.append(el("div", "ex", "No example sentence for this one yet."));
+    return;
+  }
+  panel.append(el("h4", null, "Seeing it in use"));
+  info.sents.forEach(st => {
+    const box = el("div", "sent");
+    const line = el("div", "shz");
+    line.lang = "zh-Hans";
+    for (const c of st.hz) {
+      if (c === ch) {
+        const m = el("span", "t" + info.t, c);
+        m.style.fontWeight = "600";
+        line.append(m);
+      } else {
+        line.append(document.createTextNode(c));
+      }
+    }
+    box.append(line, el("div", "spy", st.py));
+    const enr = el("div", "sen", st.en);
+    box.append(enr);
+    if (st.mine) box.append(el("span", "mine", "FROM YOUR DECKS"));
+    box.append(speakBtn(st.hz, "Say"));
+    panel.append(box);
+  });
+}
+
+function openLegend() {
+  openSheet(sheet => {
+    sheetHead(sheet, "What everything means");
+
+    sheet.append(el("h4", null, "Tone colors"));
+    const tg = el("div", "legend-grid");
+    [["1", "1st — high and flat", "mā"], ["2", "2nd — rising, like a question", "má"],
+     ["3", "3rd — dips down then up", "mǎ"], ["4", "4th — sharp fall", "mà"],
+     ["5", "neutral — light, no tone", "ma"]].forEach(([t, desc, ex]) => {
+      const r = el("div", "legend-row");
+      const s = el("span", "t" + t, ex);
+      s.style.fontWeight = "600";
+      s.style.minWidth = "34px";
+      r.append(s, el("span", null, desc));
+      tg.append(r);
+    });
+    sheet.append(tg);
+
+    sheet.append(el("h4", null, "Card status"));
+    const sg = el("div", "legend-grid");
+    [["unseen", "New — you haven't graded it yet"],
+     ["learning", "Still learning — comes back in the Still learning filter"],
+     ["known", "Know it — counted as done"]].forEach(([cls, desc]) => {
+      const r = el("div", "legend-row");
+      const d = el("span", "dot");
+      d.style.background = "var(--" + cls + ")";
+      d.style.width = "10px";
+      d.style.height = "10px";
+      r.append(d, el("span", null, desc));
+      sg.append(r);
+    });
+    sheet.append(sg);
+    sheet.append(el("div", "ex", "The bar under the title uses the same colors, scoped to whatever filter is on. A “not yet mastered” tag carries over from your Quizlet export — that term was still in your learning pile when you exported it."));
+
+    sheet.append(el("h4", null, "Category tag"));
+    sheet.append(el("div", "ex", "Every card carries a category — " + CATS.join(", ") + ". Use the category dropdown to drill into one group at a time, on its own or combined with the filters above."));
+
+    sheet.append(el("h4", null, "Tapping a character"));
+    sheet.append(el("div", "ex", "Tap any character, on either side of the card, to open its entry. The popup gives you pinyin, one to three core meanings, and how to say it. “Full entry” opens three tabs: Dictionary (meanings, other readings, pronunciation), Words (compounds, with the ones already in your decks marked), and Sentences. Tapping a character never flips the card — use the Flip button or the arrow keys."));
+
+    sheet.append(el("h4", null, "Pronunciation notes"));
+    sheet.append(el("div", "ex", "Every character gets its syllable broken into the initial consonant, the final, and the tone, each described in English. Where a sound is genuinely counterintuitive — q, x, r, the buzzy -i, ü — there is also a bolded “Watch out” line above it."));
+
+    sheet.append(el("h4", null, "Shuffle"));
+    sheet.append(el("div", "ex", "Shuffle puts the deck in a random order and keeps it there \u2014 grading a card never reshuffles the ones you have not reached yet, and the order survives closing the tab. Filters pick from that same order, so it stays consistent. Tap it again to go back to deck order; \u201CStart over\u201D at the end of a run deals a fresh order."));
+
+    sheet.append(el("h4", null, "Keyboard"));
+    const keys = el("div", "keys");
+    [["↑ / ↓ / Space", "Flip the card"], ["←", "Grade Still learning"],
+     ["→", "Grade Know it"], ["Backspace", "Undo, step back a card"],
+     ["Esc", "Close a popup"]].forEach(([k, desc]) => {
+      const kb = el("kbd", null, k);
+      keys.append(kb, el("span", null, desc));
+    });
+    sheet.append(keys);
+  }, "Legend");
+}
+
+/* ---------- home ---------- */
+function statusFor(setId) { return allStatus[setId] || (allStatus[setId] = {}); }
+
+function renderHome() {
+  const decks = document.getElementById("decks");
+  decks.replaceChildren();
+  let totalCards = 0, totalKnown = 0;
+
+  SETS.forEach((set, idx) => {
+    totalCards += set.cards.length;
+    const st = statusFor(set.id);
+    let known = 0, learning = 0;
+    set.cards.forEach(c => {
+      const v = st[c.id];
+      if (v === "known") known++;
+      else if (v === "learning") learning++;
+    });
+    totalKnown += known;
+
+    const b = document.createElement("div");
+    b.className = "deck";
+
+    const num = el("span", "num", String(idx + 1).padStart(2, "0"));
+    const name = el("span", "name", set.title);
+    const count = el("span", "count", set.cards.length + " cards");
+    const note = el("span", "note", set.subtitle);
+
+    const mini = el("span", "mini");
+    const bar = el("span", "bar");
+    const bk = el("span", "b-known");
+    bk.style.width = (known / set.cards.length * 100) + "%";
+    const bl = el("span", "b-learn");
+    bl.style.width = (learning / set.cards.length * 100) + "%";
+    bar.append(bk, bl);
+    mini.append(bar, el("span", "pct", known + " / " + set.cards.length + " known"));
+
+    const tags = el("span", "tags");
+    set.cats.forEach(([label, n]) => {
+      const t = el("span", "tag");
+      t.append(label + " ", el("b", null, String(n)));
+      tags.append(t);
+    });
+
+    const actions = el("span", "deck-actions");
+    const studyBtn = el("button", "btn primary", "Study");
+    studyBtn.type = "button";
+    studyBtn.addEventListener("click", () => go(set.id));
+    const listBtn = el("button", "btn", "View word list");
+    listBtn.type = "button";
+    listBtn.addEventListener("click", () => goList(set.id));
+    actions.append(studyBtn, listBtn);
+
+    b.append(num, name, count, note, mini, tags, actions);
+    decks.append(b);
+  });
+
+  document.getElementById("t-cards").textContent = String(totalCards);
+  document.getElementById("t-sets").textContent = String(SETS.length);
+  document.getElementById("t-chars").textContent = String(Object.keys(CHARS).length);
+  document.getElementById("t-known").textContent = String(totalKnown);
+}
+
+/* ---------- routing ---------- */
+const catSel = document.getElementById("cat");
+const chunkSel = document.getElementById("chunk");
+const shuffleBtn = document.getElementById("t-shuffle");
+const pyBtn = document.getElementById("t-py");
+
+function syncPy() {
+  pyBtn.setAttribute("aria-pressed", String(state.showPy));
+  pyBtn.textContent = state.showPy ? "Pinyin on front" : "Pinyin hidden";
+  pyBtn.title = state.showPy
+    ? "Tap to hide pinyin on the front of the card"
+    : "Tap to show pinyin on the front of the card";
+}
+
+pyBtn.addEventListener("click", () => {
+  state.showPy = !state.showPy;
+  syncPy();
+  save();
+  render();
+});
+
+function syncShuffle() {
+  const on = isShuffled();
+  shuffleBtn.setAttribute("aria-pressed", String(on));
+  shuffleBtn.textContent = on ? "Shuffled" : "Shuffle";
+  shuffleBtn.title = on ? "Tap to go back to deck order" : "Put this deck in a random order";
+}
+
+shuffleBtn.addEventListener("click", () => {
+  if (isShuffled()) { delete orders[state.set]; rank = null; save(); }
+  else shuffleDeck();
+  syncShuffle();
+  state.i = 0;
+  state.flipped = false;
+  state.history = [];
+  render();
+});
+
+function fillFilters() {
+  catSel.replaceChildren();
+  catSel.append(new Option("All categories (" + CARDS.length + ")", "all"));
+  CATS.forEach(([name, n]) => {
+    if (n) catSel.append(new Option(name + " (" + n + ")", name));
+  });
+  catSel.value = "all";
+
+  chunkSel.replaceChildren();
+  const nChunks = Math.ceil(CARDS.length / CHUNK);
+  chunkSel.append(new Option("Whole deck (" + CARDS.length + ")", "all"));
+  for (let i = 0; i < nChunks; i++) {
+    const lo = i * CHUNK + 1;
+    const hi = Math.min((i + 1) * CHUNK, CARDS.length);
+    chunkSel.append(new Option("Cards " + lo + "\u2013" + hi, String(i)));
+  }
+  chunkSel.value = "all";
+}
+
+function openSet(setId) {
+  const set = SETS.find(x => x.id === setId);
+  if (!set) return showHome();
+  SET = set;
+  CARDS = set.cards;
+  CATS = set.cats;
+  state.set = setId;
+  state.status = statusFor(setId);
+  state.mode = "all";
+  state.cat = "all";
+  state.chunk = "all";
+  state.i = 0;
+  state.flipped = false;
+  state.history = [];
+  document.querySelectorAll("[data-mode]").forEach(b => {
+    b.setAttribute("aria-pressed", String(b.dataset.mode === "all"));
+  });
+  document.getElementById("set-title").textContent = set.title;
+  buildRank();
+  fillFilters();
+  syncPy();
+  syncShuffle();
+  document.getElementById("home").hidden = true;
+  document.getElementById("list").hidden = true;
+  document.getElementById("study").hidden = false;
+  document.title = set.title;
+  window.scrollTo(0, 0);
+  render();
+}
+
+function showHome() {
+  SET = null;
+  state.set = null;
+  closePop();
+  document.getElementById("study").hidden = true;
+  document.getElementById("list").hidden = true;
+  document.getElementById("home").hidden = false;
+  document.title = "\u4e2d\u6587 Mandarin Decks";
+  renderHome();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- word list ---------- */
+const listSearch = document.getElementById("list-search");
+const listCatSel = document.getElementById("list-cat");
+let listSetId = null;
+
+function openList(setId) {
+  const set = SETS.find(x => x.id === setId);
+  if (!set) return showHome();
+  closePop();
+  listSetId = setId;
+
+  document.getElementById("list-title").textContent = set.title;
+  document.getElementById("list-subtitle").textContent = set.subtitle;
+  document.getElementById("list-count").textContent = set.cards.length + " cards";
+
+  listCatSel.replaceChildren();
+  listCatSel.append(new Option("All categories (" + set.cards.length + ")", "all"));
+  set.cats.forEach(([name, n]) => {
+    if (n) listCatSel.append(new Option(name + " (" + n + ")", name));
+  });
+  listCatSel.value = "all";
+  listSearch.value = "";
+
+  renderList();
+  document.getElementById("home").hidden = true;
+  document.getElementById("study").hidden = true;
+  document.getElementById("list").hidden = false;
+  document.title = set.title + " \u2014 word list";
+  window.scrollTo(0, 0);
+}
+
+function renderList() {
+  const set = SETS.find(x => x.id === listSetId);
+  if (!set) return;
+  const body = document.getElementById("list-body");
+  body.replaceChildren();
+
+  const q = listSearch.value.trim().toLowerCase();
+  const cat = listCatSel.value;
+  const st = statusFor(set.id);
+
+  const groups = new Map();
+  for (const card of set.cards) {
+    if (cat !== "all" && card.cat !== cat) continue;
+    if (q) {
+      const hay = (card.hz + " " + card.py + " " + card.en).toLowerCase();
+      if (!hay.includes(q)) continue;
+    }
+    if (!groups.has(card.cat)) groups.set(card.cat, []);
+    groups.get(card.cat).push(card);
+  }
+
+  if (!groups.size) {
+    body.append(el("div", "list-empty", "No words match that search."));
+    return;
+  }
+
+  const order = set.cats.map(([name]) => name).filter(name => groups.has(name));
+  for (const cat of order) {
+    const section = el("div", "list-section");
+    section.append(el("div", "list-group-title", cat));
+    const rows = el("div", "list-rows");
+    for (const card of groups.get(cat)) {
+      const row = el("div", "word-row");
+      row.append(renderHanzi(card), renderPinyin(card), el("span", "en", card.en));
+      const v = st[card.id];
+      const label = v === "known" ? "known" : v === "learning" ? "learning" : "new";
+      row.append(el("span", "pill " + (v || "unseen"), label));
+      rows.append(row);
+    }
+    section.append(rows);
+    body.append(section);
+  }
+}
+
+listSearch.addEventListener("input", renderList);
+listCatSel.addEventListener("change", renderList);
+
+document.getElementById("list-back").addEventListener("click", () => { location.hash = ""; });
+document.getElementById("list-study").addEventListener("click", () => go(listSetId));
+
+function goList(setId) {
+  if (location.hash !== "#/list/" + setId) location.hash = "#/list/" + setId;
+  else route();
+}
+
+function go(setId) {
+  if (location.hash !== "#/" + setId) location.hash = "#/" + setId;
+  else route();
+}
+
+function route() {
+  const lm = location.hash.match(/^#\/list\/(.+)$/);
+  if (lm && SETS.some(s => s.id === lm[1])) return openList(lm[1]);
+  const m = location.hash.match(/^#\/(.+)$/);
+  if (m && SETS.some(s => s.id === m[1])) openSet(m[1]);
+  else showHome();
+}
+
+window.addEventListener("hashchange", route);
+
+document.getElementById("back").addEventListener("click", () => { location.hash = ""; });
+
+document.querySelectorAll("[data-mode]").forEach(b => {
+  b.addEventListener("click", () => setMode(b.dataset.mode));
+});
+
+catSel.addEventListener("change", () => {
+  state.cat = catSel.value;
+  state.i = 0;
+  state.flipped = false;
+  render();
+});
+
+chunkSel.addEventListener("change", () => {
+  state.chunk = chunkSel.value;
+  state.i = 0;
+  state.flipped = false;
+  render();
+});
+
+
+document.getElementById("legend-btn").addEventListener("click", openLegend);
+
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape") {
+    if (sheetEl) { closeSheet(); return; }
+  }
+  if (sheetEl || !SET) return;
+  const tag = (ev.target.tagName || "").toLowerCase();
+  if (tag === "select" || tag === "input" || tag === "textarea") return;
+  if (ev.key === "ArrowUp" || ev.key === "ArrowDown" || ev.key === " ") {
+    ev.preventDefault(); doFlip();
+  } else if (ev.key === "ArrowLeft") {
+    ev.preventDefault(); grade("learning");
+  } else if (ev.key === "ArrowRight") {
+    ev.preventDefault(); grade("known");
+  } else if (ev.key === "Backspace") {
+    ev.preventDefault(); stepBack();
+  }
+});
+
+route();
+</script>
+</body>
+</html>
