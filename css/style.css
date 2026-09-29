@@ -320,6 +320,12 @@ body.rv-open { overflow: hidden; }       /* keep the page behind from scrolling 
   .nav ul { flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--gutter) 16px; }
   .nav a { display: block; padding-block: 10px; border-bottom: 1px solid var(--line); }
   .nav li:last-child a { border-bottom: 0; }
+  /* Hero buttons on phones: View Résumé full width, then Contact and LinkedIn side by side */
+  .hero .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .hero .btn-row .btn { justify-content: center; }
+  .hero .btn-row .btn-primary { grid-column: 1 / -1; font-size: 20px; padding: 14px 20px; }
+  .hero .btn-row a[href="#contact"] { order: 1; }
+  .hero .btn-row a[href*="linkedin"] { order: 2; }
   .resume-viewer { width: 100vw; height: 100dvh; border-radius: 0; }
   .rv-pages { padding: 12px; gap: 12px; }
   .nav .nav-cta a { border: 0; padding: 10px 0; }
