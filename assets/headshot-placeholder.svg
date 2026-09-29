@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 950" role="img" aria-label="Photo placeholder">
-  <rect width="760" height="950" fill="#E9ECF0"/>
-  <circle cx="380" cy="380" r="150" fill="#D5DAE1"/>
-  <path d="M110 950c0-170 120-300 270-300s270 130 270 300z" fill="#D5DAE1"/>
-  <text x="380" y="410" text-anchor="middle" font-family="EB Garamond, Garamond, serif" font-size="96" fill="#14213D" opacity=".55">GR</text>
-</svg>
