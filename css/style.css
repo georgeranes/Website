@@ -131,9 +131,10 @@ ul, ol { margin: 0; padding: 0; }
 .hero { padding-block: clamp(56px, 9vw, 112px) var(--section); }
 .hero .wrap { display: grid; grid-template-columns: 1.9fr 1fr; gap: clamp(40px, 7vw, 96px); align-items: center; }
 .hero h1 { font-size: clamp(54px, 9vw, 92px); font-weight: 500; letter-spacing: -.02em; line-height: 1; margin-bottom: 26px; }
-.tagline { font-size: clamp(19px, 1.65vw, 22px); line-height: 1.4; text-wrap: balance; color: var(--ink); margin-bottom: 14px; }
-.tagline span { display: block; }         /* each line of the tagline starts on its own row */
-.tagline span + span { margin-top: 10px; }
+.tagline { font-size: clamp(19px, 1.65vw, 22px); line-height: 1.4; color: var(--ink); margin-bottom: 14px; }
+.tagline .line { display: block; }        /* each sentence starts on its own row */
+.tagline .line + .line { margin-top: 10px; }
+.tagline .phrase { white-space: nowrap; } /* wrap only between phrases, never mid-phrase */
 .tagline em { font-style: italic; }
 .hero .sub { color: var(--muted); font-size: 20px; margin-bottom: 34px; max-width: 42ch; }
 

@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500&text=%E4%B8%AD%E6%96%87&display=swap">
   <!-- The ?v= number makes browsers fetch fresh files; bump it whenever style.css or main.js changes. -->
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/style.css?v=5">
   <script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
@@ -50,8 +50,9 @@
         <h1>George Ranes</h1>
         <!-- EDIT: positioning line -->
         <p class="tagline">
-          <span>Triple-Degree Finance Student with Commercial Banking Experience</span>
-          <span>Bilingual in English and Spanish, Actively Learning Mandarin</span>
+          <!-- On narrow screens a line may only break between the <span class="phrase"> pieces. -->
+          <span class="line"><span class="phrase">Triple-Degree Finance Student</span> <span class="phrase">with Commercial Banking Experience</span></span>
+          <span class="line"><span class="phrase">Bilingual in English and Spanish,</span> <span class="phrase">Actively Learning Mandarin</span></span>
         </p>
         <p class="sub">Building a Career in Chicago Finance</p>
         <div class="btn-row">
@@ -86,7 +87,7 @@
         </div>
         <!-- AT A GLANCE: one <dd> per row -->
         <dl class="glance reveal">
-          <div><dt>Graduating</dt><dd>May 2027</dd><dd>GPA 3.87</dd></div>
+          <div><dt>Graduating</dt><dd>May 2027</dd><dd>GPA: 3.87</dd></div>
           <div><dt>Degrees</dt><dd>B.S. Finance &amp; Banking</dd><dd>B.A. International Business</dd><dd>B.A. Anthropology</dd></div>
           <div><dt>Languages</dt><dd>English</dd><dd>Spanish (Professional)</dd><dd>Mandarin (Learning)</dd></div>
           <div><dt>Experience</dt><dd>Commercial Banking</dd><dd>Credit Analysis</dd><dd>Client Service</dd></div>
