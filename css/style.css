@@ -224,7 +224,13 @@ ul, ol { margin: 0; padding: 0; }
 .flashcard .hz { font-family: var(--han); font-size: clamp(64px, 9vw, 88px); line-height: 1.1; color: var(--ink); font-weight: 500; }
 .flashcard .py { font-size: 26px; margin-top: 6px; letter-spacing: .02em; }
 .flashcard .en { color: var(--muted); font-style: italic; margin-top: 2px; }
-.flashcard .hint { margin-top: 18px; font-variant-caps: all-small-caps; letter-spacing: .12em; font-size: 16px; color: var(--gold-dark); }
+.flashcard .hint {                        /* the card's call to action: a gold pill */
+  margin-top: 20px; padding: 6px 18px 8px; border: 1.5px solid var(--gold); border-radius: 999px;
+  background: rgba(184, 145, 47, .10); color: var(--gold-dark);
+  font-variant-caps: all-small-caps; letter-spacing: .12em; font-size: 20px; font-weight: 600;
+  transition: background .2s ease, color .2s ease;
+}
+.flashcard:hover .hint, .flashcard:focus-visible .hint { background: var(--gold); border-color: var(--gold); color: #fff; }
 .t1 { color: var(--tone1); }
 .t2 { color: var(--tone2); }
 
