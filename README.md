@@ -7,8 +7,8 @@ index.html                  the whole main site (Home, About, Experience, Mandar
 css/style.css               all styling; colors and fonts are set once at the top in :root
 js/main.js                  mobile menu, nav highlighting, fade-ins, Mandarin totals
 assets/
-  resume.pdf                PLACEHOLDER: replace with your real résumé (keep the filename)
-  headshot.jpg              your photo, once added (see below); until then a "GR" monogram shows
+  resume.pdf                your résumé (replace it to update; keep the filename)
+  headshot.jpg              your photo (portrait, about 4:5)
   favicon.svg               the "GR" browser-tab icon
 mandarin/
   index.html                the flashcard app
@@ -21,8 +21,8 @@ mandarin/
 Everything you'll change is in `index.html`. Search for `EDIT:` to find the spots meant for you.
 
 - **Add a job.** In the Experience section, copy one `<li class="role"> … </li>` block, paste it where it belongs (newest first), then change the dates, title, organization and bullet points.
-- **Photo.** Save a portrait-shaped headshot (about 4:5, at least 800 px wide) as `assets/headshot.jpg`. In `index.html`, delete the `<div class="monogram">` line and remove the `<!--` and `-->` around the `<img>` line just below it.
-- **Key facts band.** The four numbers under the hero are in the "KEY FACTS" block of `index.html`.
+- **Photo.** Replace `assets/headshot.jpg` with a new portrait-shaped photo (about 4:5, at least 800 px wide), keeping the filename.
+- **At a glance card.** In the About section of `index.html`, each `<dd>` is one row of the card.
 - **Résumé.** Replace `assets/resume.pdf` with your PDF, using the same filename. Both résumé buttons point at it.
 - **Colors and fonts.** Change them in the `:root` block at the top of `css/style.css`.
 
