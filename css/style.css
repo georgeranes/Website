@@ -262,6 +262,34 @@ ul, ol { margin: 0; padding: 0; }
 .site-footer a { color: var(--navy-muted); }
 .site-footer a:hover { color: #fff; }
 
+/* ---------- résumé viewer ---------- */
+.resume-viewer {
+  width: min(960px, calc(100vw - 32px)); height: min(92vh, 1240px);
+  max-width: none; max-height: none; padding: 0; border: 0; border-radius: 8px;
+  background: var(--bg); color: var(--text); box-shadow: 0 24px 80px rgba(10, 18, 36, .35);
+  overflow: hidden;
+}
+.resume-viewer[open] { display: flex; flex-direction: column; }
+.resume-viewer::backdrop { background: rgba(14, 24, 48, .62); }
+.rv-bar {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.rv-bar h2 { font-size: 24px; margin-right: auto; }
+.rv-bar .btn { padding: 6px 16px 8px; font-size: 17px; }
+.rv-close {
+  width: 40px; height: 40px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: none; color: var(--ink); font: inherit; font-size: 26px; line-height: 1; cursor: pointer;
+}
+.rv-close:hover { border-color: var(--ink); }
+.rv-pages {
+  flex: 1; overflow: auto; padding: 20px; background: #E6E9EE;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+.rv-pages canvas { display: block; max-width: 100%; height: auto; background: #fff; box-shadow: var(--shadow); }
+.rv-status { margin: auto; color: var(--muted); text-align: center; }
+body.rv-open { overflow: hidden; }       /* keep the page behind from scrolling */
+
 /* ---------- reveal on scroll (skipped when reduced motion is on) ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
@@ -292,6 +320,8 @@ ul, ol { margin: 0; padding: 0; }
   .nav ul { flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--gutter) 16px; }
   .nav a { display: block; padding-block: 10px; border-bottom: 1px solid var(--line); }
   .nav li:last-child a { border-bottom: 0; }
+  .resume-viewer { width: 100vw; height: 100dvh; border-radius: 0; }
+  .rv-pages { padding: 12px; gap: 12px; }
   .nav .nav-cta a { border: 0; padding: 10px 0; }
   .nav .nav-cta a:hover { background: none; color: var(--ink); }
   .hero { padding-top: 40px; }
