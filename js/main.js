@@ -133,4 +133,19 @@ if (viewer && typeof viewer.showModal === "function") {
   viewer.addEventListener("close", () => document.body.classList.remove("rv-open"));
 }
 
+// Arriving with a section in the address (e.g. "Back" from the flashcards to #mandarin):
+// jump there once the fonts have loaded, since the late-loading fonts shift the layout.
+if (location.hash.length > 1) {
+  const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (target) {
+    const jump = () => {
+      const root = document.documentElement;
+      root.style.scrollBehavior = "auto";   // jump instead of animating from the top
+      target.scrollIntoView({ block: "start" });
+      root.style.scrollBehavior = "";
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(jump);
+  }
+}
+
 document.getElementById("year").textContent = new Date().getFullYear();
