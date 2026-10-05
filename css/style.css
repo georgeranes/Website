@@ -201,6 +201,10 @@ ul, ol { margin: 0; padding: 0; }
 
 .edu { display: grid; grid-template-columns: 200px 1fr; gap: 12px 40px; padding-block: 30px; border-top: 1px solid var(--line); }
 .sub-head + .edu { border-top: 0; padding-top: 0; }
+.edu .points { padding-left: 1.1em; margin-top: 12px; }
+.edu .points li { margin-bottom: 8px; }
+.edu .points li::marker { color: var(--gold); }
+.edu .points li strong { color: var(--ink); font-weight: 600; }
 .edu .degrees { list-style: none; margin-bottom: 10px; }
 .edu .degrees li { color: var(--ink); font-size: 20px; }
 .edu .note { color: var(--muted); margin: 0; }
