@@ -122,7 +122,7 @@
   .deck .name { font-size: 22px; font-weight: 600; line-height: 1.25; }
   .deck .name .han, .title .han { font-family: var(--han); font-weight: 600; margin-right: .32em; }
   .deck .count { grid-row: 1; grid-column: 3; font-size: 15px; color: var(--muted); white-space: nowrap; padding-top: 4px; }
-  .deck .note { grid-column: 2 / span 2; font-size: 16px; color: var(--muted); }
+  .deck .note { grid-column: 2 / span 2; font-size: 16px; color: var(--muted); background: none; border: 0; border-radius: 0; padding: 0; }
   .deck .mini { grid-column: 2 / span 2; display: flex; align-items: center; gap: 10px; margin-top: 10px; }
   .deck .bar { flex: 1; height: 4px; }
   .deck .pct { font-size: 15px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -408,7 +408,9 @@
     .act.flip { grid-column: 1 / -1; order: -1; }
     .act { min-height: 50px; padding: 12px 8px; }
     .face { padding: 18px 18px 14px; }
-    .card { min-height: 36vh; }
+    .card { min-height: 44vh; }
+    .tally { gap: 18px; }
+    .tally span { font-size: 14px; letter-spacing: .05em; }
     .hz { font-size: clamp(34px, 11vw, 50px); }
   }
 </style>

@@ -43,16 +43,19 @@ Everything you'll change is in `index.html`. Search for `EDIT:` to find the spot
    },
    ```
 
-   - `toks` lists each character with its pinyin `p` and tone `t` (1–4, or 5 for neutral).
-   - Optional card fields: `"q":"learning"` shows a "not yet mastered" tag. `"kind":"pattern"` together with a `"pattern":"…"` note shows that note on the back of the card. Other `kind` values such as `"grammar"` and `"sentence"` are labels only.
+   - `toks` lists each character with its pinyin `p` and tone `t` (1–4, or 5 for neutral), one per Chinese character in `hz`, in order.
+   - When two forms are both right, write them in one card with a full-width slash: `"hz":"这儿／这里","py":"zhèr / zhèlǐ"`, and list the `toks` for both forms in order. The slash shows in the pinyin too.
+   - Optional card fields: `"kind":"sentence"` for phrases; `"kind":"pattern"` together with a `"pattern":"…"` note shows that note on the back of the card.
 
-2. For any character that isn't already in `mandarin/data/chars.js`, add a line in the same format as the existing ones. Characters that are already there are reused automatically.
+2. For any character that isn't already in `mandarin/data/chars.js`, add a line in the same format as the existing ones. Characters that are already there are reused automatically, and every multi-character word in the decks is added to its characters' Words tab on its own.
 
-3. Save. The app's home screen and the Mandarin section of the main site both pick up the new totals on their own.
+3. Bump the `?v=` number on the `data/sets.js` and `data/chars.js` script tags in `mandarin/index.html` (and on `mandarin/data/sets.js` in the main `index.html`) so browsers fetch the new deck right away.
+
+4. Save. The app's home screen and the Mandarin section of the main site both pick up the new totals on their own.
 
 Tip: the easiest way to produce a new set is to paste your Quizlet list to Claude and ask for it "in the format of mandarin/data/sets.js and chars.js".
 
-Study progress is saved in each visitor's browser, so adding sets never resets anyone's progress. Just don't rename an existing set's `id`.
+Study progress is saved in each visitor's browser under each set's `id` and each card's `id`, so adding sets or correcting a card never resets anyone's progress. Never rename an existing set's `id` or renumber its cards. Anyone can clear their own progress with **Reset progress** (end of a run, Options, or the deck list).
 
 ## Previewing locally
 

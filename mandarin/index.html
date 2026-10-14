@@ -6,401 +6,413 @@
 <title>中文 Mandarin Decks · George Ranes</title>
 <meta name="description" content="Interactive Mandarin flashcards and character dictionary built by George Ranes.">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
 <style>
+  /* ==========================================================================
+     Ink & cinnabar: rice paper, ink-dark text and one seal red (朱砂).
+     Traditional touches are kept functional: the seal logo, the 田字格 practice
+     grid behind characters, and Chinese numerals on the decks.
+     ========================================================================== */
   :root {
-    --bg: #F0F2F5;
-    --surface: #FFFFFF;
-    --surface-2: #E7EAEF;
-    --ink: #161A20;
-    --muted: #5C6672;
-    --faint: #8892A0;
-    --line: #D8DDE4;
-    --accent: #14213D;
-    --on-accent: #FFFFFF;
-    --shadow: 0 1px 2px rgba(16,24,32,.06), 0 8px 24px rgba(16,24,32,.07);
-    --t1: #C2410C; --t2: #15803D; --t3: #6D28D9; --t4: #BE185D; --t5: #6B7280;
-    --unseen: #A3AEBC; --learning: #C77800; --known: #17794A;
-    --learn-bg: #FDF3E0; --known-bg: #E6F4EC;
+    --paper: #F5EFE3;  --surface: #FFFCF6;  --surface-2: #EFE7D8;
+    --ink: #221C17;    --muted: #6D6156;    --faint: #998D80;   --line: #E2D7C5;
+    --red: #B5352B;    --red-wash: #F7E6DF;                       /* accents and red text */
+    --btn: #B5352B;    --btn-deep: #922A22;  --on-btn: #FFF8F0;    /* filled buttons and the seal */
+    --grid: rgba(181, 53, 43, .30);  --grid-dash: rgba(181, 53, 43, .22);
+    --shadow: 0 1px 2px rgba(60, 40, 20, .05), 0 10px 28px rgba(60, 40, 20, .08);
+    --t1: #C2410C; --t2: #15803D; --t3: #6D28D9; --t4: #BE185D; --t5: #7D7268;
+    --unseen: #A89C8E; --learning: #B7791F; --known: #2E7D4F;
+    --learn-bg: #FBF1DE; --known-bg: #E6F2E9;
+    --serif: "EB Garamond", Garamond, Georgia, serif;
+    --han: "Noto Serif SC", "Songti SC", "SimSun", serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0F1317; --surface: #191E24; --surface-2: #222930;
-      --ink: #E8ECF1; --muted: #9AA5B1; --faint: #7B8694; --line: #2C333B;
-      --accent: #E3CD8F; --on-accent: #0B1418;
-      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
-      --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #9CA3AF;
-      --unseen: #6B7684; --learning: #E0A030; --known: #4FC98D;
-      --learn-bg: #33270F; --known-bg: #11301F;
+      --paper: #16120F;  --surface: #1F1A16;  --surface-2: #2A231E;
+      --ink: #F1E8DB;    --muted: #B6A999;    --faint: #887C6F;   --line: #3A3029;
+      --red: #E27A66;    --red-wash: #3A1F1A;
+      --btn: #B4473A;    --btn-deep: #C9584A;  --on-btn: #FFF6EF;
+      --grid: rgba(226, 122, 102, .36);  --grid-dash: rgba(226, 122, 102, .26);
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
+      --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #A59A8E;
+      --unseen: #7E7468; --learning: #E0A94A; --known: #5FB98A;
+      --learn-bg: #33270F; --known-bg: #12301F;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0F1317; --surface: #191E24; --surface-2: #222930;
-    --ink: #E8ECF1; --muted: #9AA5B1; --faint: #7B8694; --line: #2C333B;
-    --accent: #E3CD8F; --on-accent: #0B1418;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
-    --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #9CA3AF;
-    --unseen: #6B7684; --learning: #E0A030; --known: #4FC98D;
-    --learn-bg: #33270F; --known-bg: #11301F;
+    --paper: #16120F;  --surface: #1F1A16;  --surface-2: #2A231E;
+    --ink: #F1E8DB;    --muted: #B6A999;    --faint: #887C6F;   --line: #3A3029;
+    --red: #E27A66;    --red-wash: #3A1F1A;
+    --btn: #B4473A;    --btn-deep: #C9584A;  --on-btn: #FFF6EF;
+    --grid: rgba(226, 122, 102, .36);  --grid-dash: rgba(226, 122, 102, .26);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
+    --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #A59A8E;
+    --unseen: #7E7468; --learning: #E0A94A; --known: #5FB98A;
+    --learn-bg: #33270F; --known-bg: #12301F;
   }
 
-  :root { --gap: 10px; }          /* one rhythm: filters, card and buttons all use it */
-
+  /* ---------- base ---------- */
   * { box-sizing: border-box; }
-  html, body { height: 100%; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    background: var(--bg); color: var(--ink);
-    font-family: "IBM Plex Sans", system-ui, sans-serif;
-    font-size: 15px; line-height: 1.5;
-    padding-inline: 16px; padding-block: 0 28px;
+    margin: 0; padding: 0 16px 32px;
+    background: var(--paper); color: var(--ink);
+    font-family: var(--serif); font-size: 17px; line-height: 1.5;
+    font-variant-numeric: lining-nums; -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--gap); }
+  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  [hidden] { display: none !important; }
+  .han { font-family: var(--han); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  :is(button, select, a, summary, input):focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
-  /* ---------- top bar ---------- */
-  .top { padding-block: 16px 0; display: flex; flex-direction: column; gap: var(--gap); }
-  .titlebar { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-  .title { font-family: "Noto Serif SC", Georgia, serif; font-size: 20px; font-weight: 600; margin: 0; }
-  .subtitle { font-size: 13px; color: var(--muted); }
-  .set-note { font-size: 13.5px; color: var(--muted); margin: -4px 0 0; max-width: 62ch; }
+  /* ---------- controls ---------- */
+  select, .btn, .chip, input[type="search"] {
+    font: inherit; font-size: 16px; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 4px; padding: 7px 13px; cursor: pointer;
+  }
+  select { padding-right: 28px; }
+  .btn:hover, .chip:hover, select:hover { border-color: var(--ink); }
+  .btn.primary, .primary { background: var(--btn); border-color: var(--btn); color: var(--on-btn); }
+  .btn.primary:hover { background: var(--btn-deep); border-color: var(--btn-deep); }
+  .btn.subtle {
+    background: none; border-color: transparent; color: var(--muted); padding-inline: 4px;
+    text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px;
+  }
+  .btn.subtle:hover { color: var(--red); border-color: transparent; text-decoration-color: currentColor; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  input[type="search"] { cursor: text; flex: 1 1 240px; min-width: 0; }
+  input[type="search"]:focus, select:focus { outline: none; border-color: var(--red); }
+
+  .back-link, .site-link {
+    font: inherit; font-size: 16px; color: var(--muted); background: none; border: 0;
+    padding: 4px 0; cursor: pointer; text-decoration: none; align-self: start;
+    font-variant-caps: all-small-caps; letter-spacing: .08em;
+  }
+  .back-link:hover, .site-link:hover { color: var(--red); }
+
+  /* the seal (印章): two characters cut in white from a red stamp */
+  .seal {
+    display: inline-flex; flex-direction: column; align-items: center; justify-content: center; flex: none;
+    background: var(--btn); color: var(--on-btn); border-radius: 3px;
+    font-family: var(--han); font-weight: 700; font-size: 17px; line-height: 1.04;
+    padding: 6px 7px;
+    box-shadow: inset 0 0 0 2px var(--btn), inset 0 0 0 3px var(--on-btn);
+  }
+
+  /* ---------- home ---------- */
+  .home header { padding-block: 26px 4px; }
+  .home h1 { display: flex; align-items: center; gap: 16px; margin: 0 0 14px; font-size: clamp(30px, 7vw, 38px); font-weight: 500; line-height: 1.1; }
+  .home .lede { margin: 0; color: var(--muted); max-width: 60ch; font-size: 18px; }
+  .totals { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .totals div { display: flex; flex-direction: column; }
+  .totals b { font-size: 30px; font-weight: 500; line-height: 1.05; font-variant-numeric: lining-nums tabular-nums; }
+  .totals span { font-size: 15px; color: var(--muted); font-variant-caps: all-small-caps; letter-spacing: .1em; }
+
+  .decks { display: grid; gap: 14px; margin-top: 22px; }
+  .deck {
+    display: grid; grid-template-columns: 40px 1fr auto; gap: 2px 14px; align-items: start;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 18px 20px 16px; box-shadow: var(--shadow);
+  }
+  .deck .num { grid-row: 1 / span 4; font-family: var(--han); font-size: 26px; line-height: 1.15; color: var(--red); text-align: center; }
+  .deck .name { font-size: 22px; font-weight: 600; line-height: 1.25; }
+  .deck .name .han, .title .han { font-family: var(--han); font-weight: 600; margin-right: .32em; }
+  .deck .count { grid-row: 1; grid-column: 3; font-size: 15px; color: var(--muted); white-space: nowrap; padding-top: 4px; }
+  .deck .note { grid-column: 2 / span 2; font-size: 16px; color: var(--muted); background: none; border: 0; border-radius: 0; padding: 0; }
+  .deck .mini { grid-column: 2 / span 2; display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .deck .bar { flex: 1; height: 4px; }
+  .deck .pct { font-size: 15px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .deck-actions { grid-column: 2 / span 2; display: flex; gap: 10px; align-items: center; margin-top: 14px; }
+  .deck-actions .btn { padding: 7px 18px; }
+  .deck-actions .btn.subtle { margin-left: auto; padding-inline: 2px; font-size: 15px; }
+
+  .home footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 15.5px; color: var(--muted); }
+  .home footer p { margin: 0 0 10px; max-width: 64ch; }
+  .home footer b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- study: header ---------- */
+  #study { display: flex; flex-direction: column; gap: 12px; }
+  .top { padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .titlebar { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .title { font-size: 26px; font-weight: 600; margin: 0; line-height: 1.2; }
+  .title .han { color: var(--red); }
+  .position, .subtitle { font-size: 15.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .spacer { margin-left: auto; }
-
-  .bar { height: 6px; border-radius: 99px; background: var(--surface-2); display: flex; overflow: hidden; }
+  .bar { height: 3px; border-radius: 99px; background: var(--surface-2); display: flex; overflow: hidden; }
   .bar span { display: block; height: 100%; transition: width .25s ease; }
   .bar .b-known { background: var(--known); }
   .bar .b-learn { background: var(--learning); }
-  .counts { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; align-items: center; }
+  .counts { display: flex; gap: 16px; font-size: 15px; color: var(--muted); flex-wrap: wrap; align-items: center; }
   .counts b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-  .dot { width: 8px; height: 8px; border-radius: 99px; display: inline-block; vertical-align: -1px; margin-right: 5px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; vertical-align: 1px; margin-right: 6px; }
 
-  /* ---------- controls ---------- */
-  .filters { display: flex; gap: var(--gap); flex-wrap: wrap; align-items: center; }
-  select, .btn, .chip, input[type="search"] {
-    font: inherit; font-size: 13.5px; color: var(--ink);
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 8px; padding: 7px 11px; cursor: pointer;
-  }
-  select { padding-right: 26px; }
-  input[type="search"] { cursor: text; flex: 1 1 240px; min-width: 0; }
-  input[type="search"]:focus { outline: none; border-color: var(--accent); }
-  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  .btn:hover, .chip:hover, select:hover { border-color: var(--accent); }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .toolbar { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); }
+  .seg { display: flex; gap: 4px; }
   .seg button {
-    font: inherit; font-size: 13.5px; border: 0; background: transparent;
-    color: var(--muted); padding: 7px 11px; cursor: pointer;
+    font: inherit; font-size: 16px; color: var(--muted); background: none; border: 0;
+    border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 8px 10px 9px; cursor: pointer;
   }
-  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+  .seg button:first-child { padding-left: 0; }
+  .seg button:hover { color: var(--ink); }
+  .seg button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--red); }
+
+  .opts { margin-left: auto; position: relative; }
+  .opts summary {
+    list-style: none; cursor: pointer; font-size: 16px; color: var(--muted);
+    padding: 8px 0 9px; display: flex; align-items: center; gap: 7px; user-select: none;
+  }
+  .opts summary::-webkit-details-marker { display: none; }
+  .opts summary::after {
+    content: ""; width: 6px; height: 6px; margin-top: -3px;
+    border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg);
+  }
+  .opts[open] summary::after { margin-top: 3px; transform: rotate(-135deg); }
+  .opts summary:hover, .opts[open] summary { color: var(--ink); }
+  .opts.on summary::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+  .opts-body {
+    position: absolute; right: 0; top: calc(100% + 8px); z-index: 25;
+    width: min(320px, calc(100vw - 32px));
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px; box-shadow: var(--shadow);
+    padding: 16px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: var(--muted); font-variant-caps: all-small-caps; letter-spacing: .1em; }
+  .field select { font-variant-caps: normal; letter-spacing: 0; width: 100%; }
+  .opt-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .opt-row > * { flex: 1 1 0; }
+  .chip { position: relative; padding-left: 32px; text-align: left; white-space: nowrap; }
+  .chip::before {
+    content: ""; position: absolute; left: 11px; top: 50%; width: 13px; height: 13px; margin-top: -6.5px;
+    border: 1.5px solid var(--faint); border-radius: 2px;
+  }
+  .chip[aria-pressed="true"]::before { background: var(--btn); border-color: var(--btn); box-shadow: inset 0 0 0 2px var(--surface); }
+  .opt-foot { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--line); }
+
+  /* ---------- the card ---------- */
+  .stage { perspective: 1400px; display: flex; }
+  .card {
+    display: grid; position: relative; flex: 1; min-height: min(52vh, 440px);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    box-shadow: inset 0 0 0 8px var(--surface), inset 0 0 0 9px var(--line), var(--shadow);  /* mounted-scroll inner frame */
+    transform-style: preserve-3d; transition: transform .45s cubic-bezier(.2, .7, .3, 1);
+  }
+  .card.flipped { transform: rotateX(180deg); }
+  .face {
+    grid-row: 1; grid-column: 1; min-height: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    padding: 24px 26px 18px; display: flex; flex-direction: column; gap: 12px;
+    transition: visibility 0s linear 210ms;
+  }
+  .face.back { transform: rotateX(180deg); }
+  .card:not(.flipped) .face.back, .card.flipped .face.front { visibility: hidden; }
+  .face-body {
+    flex: 1; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; gap: 16px;
+  }
+  .face-tag {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    font-size: 15px; color: var(--faint); font-variant-caps: all-small-caps; letter-spacing: .1em;
+  }
+  .cat-tag { color: var(--red); }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    font-size: 15px; font-variant-caps: all-small-caps; letter-spacing: .1em;
+  }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .pill.unseen { color: var(--unseen); }
+  .pill.learning { color: var(--learning); }
+  .pill.known { color: var(--known); }
+
+  .hz {
+    font-family: var(--han); font-weight: 500; font-size: clamp(38px, 11vw, 60px); line-height: 1.3;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 0 2px;
+  }
+  .hz.long { font-size: clamp(26px, 6.5vw, 34px); }
+  .ch {
+    font: inherit; color: inherit; background: none; border: 0; border-radius: 3px;
+    padding: 0 1px; margin: 0; cursor: pointer;
+  }
+  .ch:hover, .ch.active { background-color: var(--red-wash); }
+  .ch.punct { cursor: default; color: var(--faint); }
+  .ch.punct:hover { background-color: transparent; }
+  /* 田字格: short words on the card sit in a practice grid, one square per character */
+  .face .hz:not(.long) { gap: 0; }
+  .face .hz:not(.long) .ch:not(.punct), .pop-hz {
+    width: 1.36em; height: 1.36em; padding: 0; border-radius: 0; line-height: 1;
+    display: inline-grid; place-items: center;
+    border: 1px solid var(--grid);
+    background-image:
+      repeating-linear-gradient(90deg, var(--grid-dash) 0 4px, transparent 4px 8px),
+      repeating-linear-gradient(0deg, var(--grid-dash) 0 4px, transparent 4px 8px);
+    background-size: 100% 1px, 1px 100%;
+    background-position: center, center;
+    background-repeat: no-repeat;
+  }
+  .face .hz:not(.long) .ch:not(.punct) + .ch:not(.punct) { margin-left: -1px; }
+  .face .hz:not(.long) .ch.punct { padding: 0 .16em; align-self: center; }
+
+  .py-line { font-size: 19px; letter-spacing: .01em; display: flex; flex-wrap: wrap; justify-content: center; gap: 0 8px; }
+  .py-line.lead { font-size: 27px; font-weight: 500; }
+  .py-sep { color: var(--faint); }
+  .en-reveal { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .en-sub { font-size: 23px; font-weight: 500; line-height: 1.35; text-wrap: balance; }
+  .reveal { font-size: 16px; color: var(--muted); background: none; border: 1px dashed var(--faint); padding: 8px 20px; }
+  .reveal:hover { color: var(--ink); border-style: solid; border-color: var(--ink); }
+  .ex { font-size: 16px; color: var(--muted); }
+  .ex .exhz { font-family: var(--han); font-size: 18px; color: var(--ink); }
+  .note { font-size: 15.5px; color: var(--muted); background: var(--surface-2); border-radius: 4px; padding: 10px 12px; border-left: 3px solid var(--red); }
+  .note b { color: var(--ink); font-weight: 600; }
+
+  .t1 { color: var(--t1); } .t2 { color: var(--t2); }
+  .t3 { color: var(--t3); } .t4 { color: var(--t4); } .t5 { color: var(--t5); }
+
+  .speak {
+    font: inherit; font-size: 16px; color: var(--muted); background: none; border: 0; padding: 4px 2px;
+    cursor: pointer; align-self: center; font-variant-caps: all-small-caps; letter-spacing: .1em;
+  }
+  .speak:hover { color: var(--red); }
+
+  /* ---------- grading ---------- */
+  .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .act {
+    font: inherit; font-size: 17px; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 6px; padding: 14px 8px; min-height: 54px;
+  }
+  .act.learn { background: var(--learn-bg); border-color: var(--learning); color: var(--learning); }
+  .act.know { background: var(--known-bg); border-color: var(--known); color: var(--known); }
+  .act.flip { background: var(--btn); border-color: var(--btn); color: var(--on-btn); }
+  .act.flip:hover { background: var(--btn-deep); border-color: var(--btn-deep); }
+  .act.learn:hover, .act.know:hover { filter: brightness(1.03); }
+  #controls { display: flex; flex-direction: column; gap: 8px; }
+  .subacts { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .subacts .btn { background: none; border-color: transparent; color: var(--muted); padding: 6px 2px; }
+  .subacts .btn:hover:not(:disabled) { color: var(--ink); }
+  .kbd-hint { font-size: 14.5px; color: var(--faint); }
+  kbd { font: inherit; font-size: 13px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px; padding: 0 5px; }
+
+  /* ---------- end of a run ---------- */
+  .done {
+    flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    box-shadow: inset 0 0 0 8px var(--surface), inset 0 0 0 9px var(--line), var(--shadow);
+    padding: 36px 24px 30px; text-align: center;
+    display: flex; flex-direction: column; gap: 16px; align-items: center;
+  }
+  .done .seal { font-size: 30px; padding: 10px 12px; }
+  .done h2 { font-size: 27px; font-weight: 500; margin: 0; }
+  .tally { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+  .tally div { display: flex; flex-direction: column; }
+  .tally b { font-size: 32px; font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .tally span { font-size: 15px; color: var(--muted); font-variant-caps: all-small-caps; letter-spacing: .1em; }
+  .done-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .done .btn { padding: 9px 18px; }
+
+  /* ---------- sheets: character entry, legend, confirmations ---------- */
+  .scrim { position: fixed; inset: 0; background: rgba(30, 20, 12, .45); z-index: 30; }
+  .sheet {
+    position: fixed; z-index: 50; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(560px, calc(100vw - 28px)); max-height: min(84vh, 84svh);
+    overflow-y: auto; overscroll-behavior: contain;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow);
+    padding: 22px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .sheet h3 {
+    margin: 0; font-size: 21px; font-weight: 600; display: flex; align-items: center; gap: 10px;
+    position: sticky; top: -22px; z-index: 1; background: var(--surface); padding-block: 6px 8px; margin-top: -6px;
+  }
+  .sheet h3 .pop-x { margin-left: auto; }
+  .sheet h4 { margin: 2px 0 0; font-size: 16px; font-weight: 500; font-variant-caps: all-small-caps; letter-spacing: .12em; color: var(--red); }
+  .sheet p { margin: 0; }
+  .sheet-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pop-head { display: flex; align-items: center; gap: 16px; }
+  .pop-hz { font-family: var(--han); font-size: 46px; flex: none; }
+  .pop-py { font-size: 25px; font-weight: 500; }
+  .pop-x {
+    margin-left: auto; font: inherit; font-size: 18px; line-height: 1; color: var(--faint);
+    background: none; border: 0; cursor: pointer; padding: 5px 7px; border-radius: 4px;
+  }
+  .pop-x:hover { background: var(--surface-2); color: var(--ink); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+  .tabs button {
+    font: inherit; font-size: 16px; color: var(--muted); background: none; border: 0;
+    border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 8px 12px; cursor: pointer;
+  }
+  .tabs button:first-child { padding-left: 0; }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--red); }
+  .senses { margin: 0; padding-left: 20px; font-size: 17px; display: flex; flex-direction: column; gap: 3px; }
+  .sound-list { margin: 0; padding-left: 20px; font-size: 16px; display: flex; flex-direction: column; gap: 5px; color: var(--muted); }
+  .sound-list li::marker { color: var(--red); }
+  .words { display: flex; flex-direction: column; gap: 7px; }
+  .w { display: flex; gap: 10px; align-items: baseline; font-size: 16px; flex-wrap: wrap; }
+  .w .whz { font-family: var(--han); font-size: 18px; }
+  .w .wpy { color: var(--muted); }
+  .w .wen { color: var(--muted); margin-left: auto; text-align: right; }
+  .mine { color: var(--red); font-size: 14px; font-weight: 600; font-variant-caps: all-small-caps; letter-spacing: .1em; }
+  .sent { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .sent:last-child { border-bottom: 0; }
+  .sent .shz { font-family: var(--han); font-size: 20px; line-height: 1.5; }
+  .sent .spy { font-size: 15.5px; color: var(--muted); }
+  .sent .sen { font-size: 16px; }
+  .sent .speak { align-self: flex-start; }
+  .pop-foot { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pop-foot .btn { font-size: 15px; padding: 6px 12px; text-decoration: none; }
+  .legend-grid { display: flex; flex-direction: column; gap: 7px; }
+  .legend-row { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+  .keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 16px; align-items: center; }
 
   /* ---------- word list ---------- */
-  #list .top { padding-block: 18px 14px; }
-  #list .subtitle { display: block; margin-top: 4px; }
-  #list .filters { margin-top: 14px; }
-  #list-body { margin-top: 18px; display: flex; flex-direction: column; gap: 22px; }
+  #list .top { padding-block: 14px 4px; }
+  #list .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  #list-body { margin-top: 16px; display: flex; flex-direction: column; gap: 26px; }
   .list-group-title {
-    font-size: 12.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
-    color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--line);
+    font-size: 16px; font-weight: 500; color: var(--red); font-variant-caps: all-small-caps; letter-spacing: .12em;
+    padding-bottom: 8px; border-bottom: 1px solid var(--line);
   }
   .list-rows { display: flex; flex-direction: column; }
   .word-row {
-    display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.6fr) auto;
+    display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.6fr) auto;
     gap: 14px; align-items: center; padding: 11px 4px; border-bottom: 1px solid var(--line);
   }
   .list-rows .word-row:last-child { border-bottom: 0; }
-  .word-row .hz { font-size: 22px; margin: 0; justify-content: flex-start; }
+  .word-row .hz { font-size: 24px; justify-content: flex-start; }
   .word-row .hz .ch { font-size: inherit; padding: 0 2px; }
-  .word-row .py-line { font-size: 14.5px; color: var(--muted); flex-wrap: wrap; }
-  .word-row .en { font-size: 14px; color: var(--ink); }
-  .word-row .pill { font-size: 10.5px; white-space: nowrap; }
-  .list-empty { padding: 32px 4px; text-align: center; color: var(--muted); font-size: 14px; }
-  @media (max-width: 620px) {
+  .word-row .py-line { font-size: 16px; color: var(--muted); justify-content: flex-start; }
+  .word-row .en { font-size: 16px; }
+  .list-empty { padding: 32px 4px; text-align: center; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .bar span, .face { transition: none; }
+  }
+  @media (max-width: 640px) {
+    .kbd-hint { display: none; }
     .word-row { grid-template-columns: 1fr auto; grid-template-areas: "hz pill" "py py" "en en"; row-gap: 4px; }
     .word-row .hz { grid-area: hz; }
     .word-row .pill { grid-area: pill; justify-self: end; }
     .word-row .py-line { grid-area: py; }
     .word-row .en { grid-area: en; }
   }
-
-  /* ---------- card ---------- */
-  .stage { perspective: 1400px; display: flex; }
-  .card {
-    display: grid; position: relative; flex: 1;
-    min-height: min(52vh, 430px);
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 14px; box-shadow: var(--shadow);
-    transform-style: preserve-3d; transition: transform .45s cubic-bezier(.2,.7,.3,1);
-  }
-  .card.flipped { transform: rotateX(180deg); }
-  .face {
-    grid-row: 1; grid-column: 1; min-height: 0;
-    backface-visibility: hidden; -webkit-backface-visibility: hidden;
-    padding: 22px 20px 18px;
-    display: flex; flex-direction: column; gap: 12px;
-    transition: visibility 0s linear 210ms;
-  }
-  .face.back { transform: rotateX(180deg); }
-  .card:not(.flipped) .face.back,
-  .card.flipped .face.front { visibility: hidden; }
-  .face-body {
-    flex: 1; min-height: 0; overflow-y: auto;
-    display: flex; flex-direction: column; justify-content: center; gap: 12px;
-  }
-
-  .face-tag {
-    font-size: 11px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase;
-    color: var(--faint); display: flex; align-items: center; gap: 8px 6px; flex-wrap: wrap;
-  }
-  .pill {
-    font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    border-radius: 99px; padding: 3px 8px; border: 1px solid currentColor;
-    white-space: nowrap;
-  }
-  .pill.unseen { color: var(--unseen); }
-  .pill.learning { color: var(--learning); }
-  .pill.known { color: var(--known); }
-
-  .hz {
-    font-family: "Noto Serif SC", Georgia, serif;
-    font-size: clamp(38px, 11vw, 60px); line-height: 1.3; font-weight: 500;
-    display: flex; flex-wrap: wrap; gap: 0 2px;
-  }
-  .hz.long { font-size: clamp(26px, 6.5vw, 34px); }
-  .hz.small, .hz.long.small { font-size: clamp(24px, 6vw, 30px); }
-  .answer {
-    display: flex; flex-direction: column; gap: 6px;
-    padding-top: 14px; border-top: 1px solid var(--line);
-  }
-  .answer .py-line { font-size: 15px; }
-  .py-line.lead { font-size: 21px; font-weight: 500; }
-  .en-sub { font-size: 19px; font-weight: 500; line-height: 1.4; text-wrap: balance; }
-  .en-reveal { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
-  .reveal {
-    font-size: 14px; padding: 10px 16px; color: var(--muted);
-    border-style: dashed;
-  }
-  .reveal:hover { color: var(--ink); border-style: solid; }
-  .ch {
-    font: inherit; background: none; border: 0; padding: 0 1px; margin: 0;
-    color: inherit; cursor: pointer; border-radius: 4px;
-    border-bottom: 2px solid transparent;
-  }
-  .ch:hover, .ch.active { border-bottom-color: currentColor; background: var(--surface-2); }
-  .ch.punct { cursor: default; }
-  .ch.punct:hover { border-bottom-color: transparent; background: none; }
-
-  .py-line { font-size: 17px; letter-spacing: .01em; display: flex; flex-wrap: wrap; gap: 0 7px; }
-  .en-line { font-size: 21px; font-weight: 500; line-height: 1.4; text-wrap: balance; }
-  .note {
-    font-size: 13.5px; color: var(--muted); background: var(--surface-2);
-    border-radius: 8px; padding: 10px 12px; border-left: 3px solid var(--accent);
-  }
-  .note b { color: var(--ink); font-weight: 600; }
-  .ex { font-size: 14px; color: var(--muted); }
-  .ex .exhz { font-family: "Noto Serif SC", Georgia, serif; font-size: 17px; color: var(--ink); }
-
-  .t1 { color: var(--t1); } .t2 { color: var(--t2); }
-  .t3 { color: var(--t3); } .t4 { color: var(--t4); } .t5 { color: var(--t5); }
-
-  .speak {
-    font: inherit; font-size: 13px; color: var(--muted); background: var(--surface);
-    border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; cursor: pointer;
-    align-self: flex-start;
-  }
-  .speak:hover { border-color: var(--accent); color: var(--ink); }
-
-  /* ---------- actions ---------- */
-  .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--gap); }
-  .act {
-    font: inherit; font-size: 15px; font-weight: 500;
-    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
-    border-radius: 11px; padding: 16px 8px; cursor: pointer;
-    min-height: 54px;
-  }
-  .act.learn { background: var(--learn-bg); border-color: var(--learning); color: var(--learning); }
-  .act.know { background: var(--known-bg); border-color: var(--known); color: var(--known); }
-  .act.flip { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  .act:hover { filter: brightness(1.04); }
-  #study { display: flex; flex-direction: column; gap: var(--gap); }
-  #controls { display: flex; flex-direction: column; gap: var(--gap); }
-  .subacts { display: flex; gap: var(--gap); justify-content: space-between; align-items: center; }
-  .subacts .btn { padding: 11px 18px; font-size: 14px; }
-  .kbd-hint { font-size: 12px; color: var(--faint); }
-  kbd {
-    font: inherit; font-size: 11px; background: var(--surface-2);
-    border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
-  }
-
-  /* ---------- done screen ---------- */
-  .done {
-    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-    box-shadow: var(--shadow); padding: 30px 22px; text-align: center;
-    display: flex; flex-direction: column; gap: 16px; align-items: center;
-  }
-  .done h2 { font-family: "Noto Serif SC", Georgia, serif; font-size: 22px; margin: 0; font-weight: 600; }
-  .tally { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
-  .tally div { display: flex; flex-direction: column; gap: 2px; }
-  .tally b { font-size: 26px; font-variant-numeric: tabular-nums; font-weight: 600; }
-  .tally span { font-size: 12px; color: var(--muted); }
-  .done .btn { padding: 11px 16px; font-size: 14.5px; }
-  .primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-
-  /* ---------- character popover ---------- */
-  .pop-head { display: flex; align-items: center; gap: 10px; }
-  .pop-hz { font-family: "Noto Serif SC", Georgia, serif; font-size: 34px; line-height: 1; }
-  .pop-py { font-size: 19px; font-weight: 500; }
-  .pop-x {
-    margin-left: auto; font: inherit; font-size: 18px; line-height: 1; color: var(--faint);
-    background: none; border: 0; cursor: pointer; padding: 4px 6px; border-radius: 6px;
-  }
-  .pop-x:hover { background: var(--surface-2); color: var(--ink); }
-  .senses { margin: 0; padding-left: 18px; font-size: 14.5px; display: flex; flex-direction: column; gap: 3px; }
-  .pop .note { font-size: 13px; padding: 9px 11px; }
-  .words { display: flex; flex-direction: column; gap: 5px; }
-  .words .lbl { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
-  .w { display: flex; gap: 8px; align-items: baseline; font-size: 13.5px; }
-  .w .whz { font-family: "Noto Serif SC", Georgia, serif; font-size: 16px; }
-  .w .wpy { color: var(--muted); }
-  .w .wen { color: var(--muted); margin-left: auto; text-align: right; }
-  .w .mine { color: var(--accent); font-size: 10px; font-weight: 600; letter-spacing: .05em; }
-  .pop-foot { display: flex; gap: 8px; flex-wrap: wrap; }
-  .pop-foot .btn, .pop-foot a.btn { font-size: 12.5px; padding: 6px 10px; text-decoration: none; }
-
-  .scrim { position: fixed; inset: 0; background: rgba(8,12,16,.44); z-index: 30; }
-
-  .cat-tag {
-    font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 3px 8px;
-    white-space: nowrap;
-  }
-  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 2px; }
-  .tabs button {
-    font: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
-    background: none; border: 0; border-bottom: 2px solid transparent;
-    padding: 8px 12px; cursor: pointer; margin-bottom: -1px;
-  }
-  .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-  .tabs button:hover { color: var(--ink); }
-  .sound-list { margin: 0; padding-left: 18px; font-size: 13.5px; display: flex; flex-direction: column; gap: 5px; color: var(--muted); }
-  .sound-list li::marker { color: var(--accent); }
-  .sent { display: flex; flex-direction: column; gap: 2px; padding: 9px 0; border-bottom: 1px solid var(--line); }
-  .sent:last-child { border-bottom: 0; }
-  .sent .shz { font-family: "Noto Serif SC", Georgia, serif; font-size: 18px; line-height: 1.5; }
-  .sent .spy { font-size: 13px; color: var(--accent); }
-  .sent .sen { font-size: 13.5px; color: var(--muted); }
-  .sent .mine { color: var(--accent); font-size: 10px; font-weight: 600; letter-spacing: .05em; }
-
-  /* ---------- sheet (full entry + legend) ---------- */
-  .sheet {
-    position: fixed; z-index: 50;
-    left: 50%; top: 50%; transform: translate(-50%, -50%);
-    width: min(560px, calc(100vw - 28px));
-    max-height: min(84vh, 84svh); overflow-y: auto; overscroll-behavior: contain;
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 14px; box-shadow: var(--shadow);
-    padding: 20px;
-    display: flex; flex-direction: column; gap: 14px;
-  }
-  .sheet h3 {
-    margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px;
-    position: sticky; top: -20px; z-index: 1;
-    background: var(--surface); padding-block: 4px 8px; margin-top: -4px;
-  }
-  .sheet h3 .pop-x { margin-left: auto; }
-  .sheet h4 {
-    margin: 0; font-size: 11px; font-weight: 600; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--faint);
-  }
-  .legend-row { display: flex; align-items: center; gap: 9px; font-size: 13.5px; }
-  .legend-grid { display: flex; flex-direction: column; gap: 7px; }
-  .keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 13.5px; align-items: center; }
-
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  :is(button, select, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .card, .bar span, .face { transition: none; }
-  }
-
-  /* ---------- home ---------- */
-  [hidden] { display: none !important; }
-  .home header { padding-block: 34px 20px; }
-  .home h1 {
-    font-family: "Noto Serif SC", Georgia, serif;
-    font-size: clamp(27px, 6vw, 34px); font-weight: 600; margin: 0 0 10px; line-height: 1.2;
-  }
-  .home h1 .han { color: var(--seal); }
-  .home .lede { margin: 0; color: var(--muted); max-width: 62ch; }
-  .totals {
-    display: flex; gap: 24px; flex-wrap: wrap;
-    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
-  }
-  .totals div { display: flex; flex-direction: column; }
-  .totals b { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
-  .totals span { font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
-  .decks { display: grid; gap: 11px; margin-top: 22px; }
-  .deck {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 4px 14px;
-    align-items: start; text-align: left; width: 100%; font: inherit; color: inherit;
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 12px; padding: 15px 17px; box-shadow: var(--shadow);
-  }
-  .deck-actions {
-    grid-column: 2 / span 2; display: flex; gap: 10px; margin-top: 13px;
-    padding-top: 13px; border-top: 1px solid var(--line);
-  }
-  .deck-actions .btn { font-size: 13.5px; padding: 9px 14px; }
-  .deck .num {
-    grid-row: 1 / span 4; font-size: 12px; color: var(--faint);
-    font-variant-numeric: tabular-nums; padding-top: 5px; min-width: 16px;
-  }
-  .deck .name { font-family: "Noto Serif SC", Georgia, serif; font-size: 18px; font-weight: 600; line-height: 1.3; }
-  .deck .count { grid-row: 1; grid-column: 3; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; padding-top: 2px; }
-  .deck .note {
-    grid-column: 2 / span 2; font-size: 13.5px; color: var(--muted);
-    background: none; border: 0; border-radius: 0; padding: 0;   /* not a card note */
-  }
-  .deck .mini { grid-column: 2 / span 2; display: flex; align-items: center; gap: 9px; margin-top: 9px; }
-  .deck .bar { flex: 1; height: 5px; }
-  .deck .pct { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .deck .tags { grid-column: 2 / span 2; display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-  .deck .tag { font-size: 11px; color: var(--muted); background: var(--surface-2); border-radius: 99px; padding: 3px 9px; white-space: nowrap; }
-  .deck .tag b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-
-  .home footer {
-    margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line);
-    font-size: 13px; color: var(--muted);
-  }
-  .home footer p { margin: 0 0 8px; max-width: 64ch; }
-  .home footer b { color: var(--ink); font-weight: 600; }
-
-  .back-link {
-    font: inherit; font-size: 13.5px; color: var(--muted); background: none;
-    border: 0; padding: 4px 0; cursor: pointer; align-self: start;
-  }
-  .back-link:hover { color: var(--accent); }
-  @media (max-width: 640px) {
-    .kbd-hint { display: none; }            /* no arrow keys on a phone */
-    .subacts .btn { flex: 1; }
-  }
   @media (max-width: 460px) {
+    body { font-size: 16px; padding-bottom: 20px; }
+    .deck { grid-template-columns: 28px 1fr auto; padding: 16px 16px 14px; gap: 2px 10px; }
+    .deck .num { font-size: 22px; }
+    .deck .name { font-size: 20px; }
+    .title { font-size: 22px; }
+    .top { padding-top: 10px; gap: 8px; }
+    .seg button { padding-inline: 7px; font-size: 15.5px; }
     .actions { grid-template-columns: 1fr 1fr; }
     .act.flip { grid-column: 1 / -1; order: -1; }
-    .face { padding: 16px 15px 14px; }
-    /* keep the card and all three buttons on one screen */
-    .top { padding-block: 12px 0; }
-    .title { font-size: 18px; }
-    .filters select { flex: 1 1 calc(50% - var(--gap) / 2); min-width: 0; font-size: 12.5px; padding-inline: 9px 22px; }
-    .seg { width: 100%; }
-    .seg button { flex: 1; }
-    .chip { flex: 1 1 calc(50% - var(--gap) / 2); }
-    .card { min-height: 34vh; }
+    .act { min-height: 50px; padding: 12px 8px; }
+    .face { padding: 18px 18px 14px; }
+    .card { min-height: 44vh; }
+    .tally { gap: 18px; }
+    .tally span { font-size: 14px; letter-spacing: .05em; }
     .hz { font-size: clamp(34px, 11vw, 50px); }
-    .act { min-height: 50px; padding: 14px 8px; }
-    body { padding-block: 0 20px; }
   }
-  /* ---------- link back to the main site ---------- */
-  .site-link { display: inline-block; margin-top: 16px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
-  .site-link:hover { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -410,20 +422,20 @@
   <div id="home" class="home">
     <a class="site-link" href="../#mandarin">← George Ranes</a>
     <header>
-      <h1><span class="han">中文</span> Mandarin Decks</h1>
-      <p class="lede">Every Quizlet set, rebuilt with a tappable character dictionary. Tap any character on a card for its pinyin, meaning, how to say it, the other words it turns up in, and an example sentence.</p>
+      <h1><span class="seal" aria-hidden="true"><span>中</span><span>文</span></span><span>Mandarin Decks</span></h1>
+      <p class="lede">Every vocabulary set I’ve worked through, rebuilt as flashcards with a built-in character dictionary. Tap any character for its pinyin, meaning, pronunciation, related words and an example sentence.</p>
       <div class="totals">
-        <div><b id="t-cards">0</b><span>CARDS</span></div>
-        <div><b id="t-sets">0</b><span>SETS</span></div>
-        <div><b id="t-chars">0</b><span>CHARACTERS</span></div>
-        <div><b id="t-known">0</b><span>MARKED KNOWN</span></div>
+        <div><b id="t-cards">0</b><span>Cards</span></div>
+        <div><b id="t-sets">0</b><span>Decks</span></div>
+        <div><b id="t-chars">0</b><span>Characters</span></div>
+        <div><b id="t-known">0</b><span>Known</span></div>
       </div>
     </header>
     <div class="decks" id="decks"></div>
     <footer>
-      <p><b>Progress saves in this browser.</b> Grading a card here won't show up on another device — each keeps its own count.</p>
-      <p><b>The character entries are mine, not a dictionary's.</b> Meanings, pronunciation notes and example sentences were written for these decks, so spot-check anything that reads oddly. Every entry links out to Purple Culture for the authoritative version with audio and stroke order.</p>
-      <p><b>Decks are ordered oldest first</b> — roughly the order you learned them.</p>
+      <p><b>Progress saves in this browser.</b> Your Know it and Still learning marks stay on this device; another device keeps its own count. Any deck can be reset to start fresh.</p>
+      <p><b>The dictionary entries are my own,</b> written for these decks. Spot-check anything that reads oddly; every entry links to Purple Culture for the authoritative version with audio and stroke order.</p>
+      <p><b>Decks are listed in the order I learned them.</b></p>
     </footer>
   </div>
 
@@ -432,25 +444,35 @@
       <button class="back-link" id="back" type="button">← All decks</button>
       <div class="titlebar">
         <h1 class="title" id="set-title"></h1>
-        <span class="subtitle" id="position"></span>
         <span class="spacer"></span>
-        <button class="btn" id="legend-btn" type="button">Legend</button>
+        <span class="position" id="position"></span>
       </div>
       <div class="bar" aria-hidden="true">
         <span class="b-known" id="b-known" style="width:0"></span>
         <span class="b-learn" id="b-learn" style="width:0"></span>
       </div>
       <div class="counts" id="counts"></div>
-      <div class="filters">
+      <div class="toolbar">
         <div class="seg" role="group" aria-label="Which cards to show">
           <button type="button" data-mode="all" aria-pressed="true">All</button>
           <button type="button" data-mode="learning" aria-pressed="false">Still learning</button>
-          <button type="button" data-mode="unseen" aria-pressed="false">Unseen</button>
+          <button type="button" data-mode="unseen" aria-pressed="false">New</button>
         </div>
-        <select id="cat" aria-label="Which category"></select>
-        <select id="chunk" aria-label="Which chunk of the deck"></select>
-        <button class="chip" id="t-py" type="button" aria-pressed="true">Pinyin on front</button>
-        <button class="chip" id="t-shuffle" type="button" aria-pressed="false">Shuffle</button>
+        <details class="opts" id="opts">
+          <summary>Options</summary>
+          <div class="opts-body">
+            <label class="field"><span>Category</span><select id="cat"></select></label>
+            <label class="field"><span>Cards</span><select id="chunk"></select></label>
+            <div class="opt-row">
+              <button class="chip" id="t-py" type="button" aria-pressed="true">Pinyin on front</button>
+              <button class="chip" id="t-shuffle" type="button" aria-pressed="false">Shuffle</button>
+            </div>
+            <div class="opt-foot">
+              <button class="btn" id="legend-btn" type="button">Legend</button>
+              <button class="btn subtle" id="reset-btn" type="button">Reset progress</button>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
     <div class="stage" id="stage"></div>
@@ -464,12 +486,12 @@
         <h1 class="title" id="list-title"></h1>
         <span class="subtitle" id="list-count"></span>
         <span class="spacer"></span>
-        <button class="btn" id="list-study" type="button">Study this set →</button>
+        <button class="btn primary" id="list-study" type="button">Study this deck</button>
       </div>
       <p class="subtitle" id="list-subtitle"></p>
     </div>
     <div class="filters">
-      <input id="list-search" type="search" placeholder="Search hanzi, pinyin or English…" aria-label="Search this set">
+      <input id="list-search" type="search" placeholder="Search hanzi, pinyin or English…" aria-label="Search this deck">
       <select id="list-cat" aria-label="Which category"></select>
     </div>
     <div id="list-body"></div>
@@ -478,10 +500,12 @@
 </div>
 
 <!-- Deck data lives in data/ so new sets can be added without touching the app code. -->
-<script src="data/sets.js"></script>
-<script src="data/chars.js"></script>
+<script src="data/sets.js?v=2"></script>
+<script src="data/chars.js?v=2"></script>
 <script>
-const KEY = "mandarin-app-progress-v1";
+const KEY = "mandarin-app-progress-v1";   // never rename: everyone's saved progress lives under this key
+const HAN = /[一-鿿]/;
+const ALT = /\s*[\/／]\s*/;                // a card can offer two forms, written "这儿／这里"
 
 // A set may leave out "cats"; they're then counted from its cards, in first-seen order.
 SETS.forEach(set => {
@@ -490,6 +514,48 @@ SETS.forEach(set => {
   set.cards.forEach(c => counts.set(c.cat, (counts.get(c.cat) || 0) + 1));
   set.cats = [...counts];
 });
+
+// Make every multi-character word in the decks show up in its characters' Words tab, marked
+// as being in the decks, so new decks link into the dictionary without hand-editing chars.js.
+SETS.forEach(set => set.cards.forEach(card => {
+  if (card.kind) return;                  // phrases and patterns aren't dictionary words
+  const hz = card.hz.split(ALT), py = card.py.split(ALT), en = card.en.split(ALT);
+  hz.forEach((word, i) => {
+    if ([...word].length < 2 || ![...word].every(c => HAN.test(c))) return;
+    const entry = {
+      hz: word,
+      py: py.length === hz.length ? py[i] : card.py,
+      en: en.length === hz.length ? en[i] : card.en,
+      mine: true,
+    };
+    new Set(word).forEach(ch => {
+      const info = CHARS[ch];
+      if (!info) return;
+      const found = info.words.find(w => w.hz === word);
+      if (found) found.mine = true;
+      else info.words.push(entry);
+    });
+  });
+}));
+
+// "入门 Intro Words 1" -> the Chinese name set in the Chinese serif, then the English.
+function titleNodes(title) {
+  const m = title.match(/^([一-鿿]+)\s+(.*)$/);
+  if (!m) return [document.createTextNode(title)];
+  const h = document.createElement("span");
+  h.className = "han";
+  h.lang = "zh-Hans";
+  h.textContent = m[1];
+  return [h, document.createTextNode(m[2])];
+}
+
+// 1 -> 一, 12 -> 十二, 25 -> 二十五 (deck numbers)
+function cnNum(n) {
+  const d = "一二三四五六七八九";
+  if (n < 10) return d[n - 1];
+  const tens = Math.floor(n / 10), ones = n % 10;
+  return (tens > 1 ? d[tens - 1] : "") + "十" + (ones ? d[ones - 1] : "");
+}
 let CARDS = [], CATS = [], SET = null;
 let allStatus = {};
 let orders = {};        // deck id -> card ids in shuffled order (persisted)
@@ -591,7 +657,7 @@ function speak(text) {
   if (!("speechSynthesis" in window)) return;
   try {
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
+    const u = new SpeechSynthesisUtterance(text.replace(/\s*[\/／]\s*/g, "，"));   // read "A／B" as two words
     u.lang = "zh-CN";
     if (zhVoice) u.voice = zhVoice;
     u.rate = 0.85;
@@ -599,7 +665,7 @@ function speak(text) {
   } catch (e) { /* ignore */ }
 }
 function speakBtn(text, label) {
-  const b = el("button", "speak", (label || "Say it") + " ▶");
+  const b = el("button", "speak", "▶ " + (label || "Listen"));
   b.type = "button";
   b.addEventListener("click", ev => { ev.stopPropagation(); speak(text); });
   return b;
@@ -630,7 +696,16 @@ function renderHanzi(card) {
 function renderPinyin(card) {
   const box = el("div", "py-line");
   if (card.toks.length && card.toks[0].p) {
-    for (const t of card.toks) box.append(el("span", "t" + t.t, t.p));
+    // walk the characters so a "／" between two forms shows up in the pinyin too
+    let ti = 0;
+    for (const ch of card.hz) {
+      if (HAN.test(ch)) {
+        const t = card.toks[ti++];
+        if (t) box.append(el("span", "t" + t.t, t.p));
+      } else if (ch === "/" || ch === "／") {
+        box.append(el("span", "py-sep", "/"));
+      }
+    }
   } else {
     box.append(el("span", "t5", card.py));
   }
@@ -660,11 +735,8 @@ function render() {
   /* front */
   const front = el("div", "face front");
   const ftag = el("div", "face-tag");
-  ftag.append(el("span", null, "Chinese"));
-  const p = el("span", "pill " + st, st === "unseen" ? "new" : st === "learning" ? "learning" : "known");
-  ftag.append(p);
   ftag.append(el("span", "cat-tag", card.cat));
-  if (card.q === "learning") ftag.append(el("span", "pill learning", "not yet mastered"));
+  ftag.append(el("span", "pill " + st, st === "unseen" ? "new" : st === "learning" ? "learning" : "known"));
   const fbody = el("div", "face-body");
   fbody.append(renderHanzi(card));
   if (state.showPy) fbody.append(renderPinyin(card));
@@ -673,7 +745,9 @@ function render() {
 
   /* back */
   const back = el("div", "face back");
-  back.append(el("div", "face-tag", "Pinyin"));
+  const btag = el("div", "face-tag");
+  btag.append(el("span", "cat-tag", card.cat), el("span", null, "answer"));
+  back.append(btag);
   const bbody = el("div", "face-body");
   const lead = renderPinyin(card);
   lead.classList.add("lead");
@@ -684,13 +758,6 @@ function render() {
     e.append(el("div", "exhz", card.ex));
     bbody.append(e);
   }
-  if (card.flag) {
-    const n = el("div", "note");
-    n.append(el("b", null, "Heads up: "));
-    n.append(document.createTextNode(card.flag));
-    bbody.append(n);
-  }
-
   const enWrap = el("div", "en-reveal");
   const showEnglish = () => {
     state.revealEn = true;
@@ -739,7 +806,7 @@ function render() {
 function renderEmpty(stage) {
   const d = el("div", "done");
   d.append(el("h2", null, "Nothing here"));
-  d.append(el("p", "subtitle", "No cards match this filter. Switch back to All, or pick another chunk."));
+  d.append(el("p", "subtitle", "No cards match this filter. Switch back to All, or pick another category or set of cards in Options."));
   const b = el("button", "btn primary", "Show all cards");
   b.type = "button";
   b.addEventListener("click", () => setMode("all"));
@@ -751,7 +818,10 @@ function renderDone(stage, d) {
   const tal = { known: 0, learning: 0, unseen: 0 };
   d.forEach(c => tal[statusOf(c.id)]++);
   const box = el("div", "done");
-  box.append(el("h2", null, "好！End of this run"));
+  const seal = el("span", "seal", "好");
+  seal.lang = "zh-Hans";
+  seal.setAttribute("aria-hidden", "true");
+  box.append(seal, el("h2", null, "End of this run"));
   const t = el("div", "tally");
   [["known", "Know it", "--known"], ["learning", "Still learning", "--learning"], ["unseen", "Not graded", "--unseen"]]
     .forEach(([k, label, cssvar]) => {
@@ -762,20 +832,70 @@ function renderDone(stage, d) {
       t.append(c);
     });
   box.append(t);
-  if (tal.learning) {
-    const b = el("button", "btn primary", "Review " + tal.learning + " still-learning card" + (tal.learning === 1 ? "" : "s"));
+  const acts = el("div", "done-actions");
+  if (tal.learning && state.mode !== "learning") {
+    const b = el("button", "btn primary", "Review " + tal.learning + " still learning");
     b.type = "button";
     b.addEventListener("click", () => setMode("learning"));
-    box.append(b);
+    acts.append(b);
   }
-  const again = el("button", "btn", "Start over");
+  const again = el("button", "btn" + (tal.learning && state.mode !== "learning" ? "" : " primary"), "Start over");
   again.type = "button";
   again.addEventListener("click", () => {
     if (isShuffled()) shuffleDeck();        // a fresh order for the next pass
     state.i = 0; state.flipped = false; state.history = []; render();
   });
-  box.append(again);
+  acts.append(again);
+  box.append(acts);
+  const reset = el("button", "btn subtle", "Reset progress and start fresh");
+  reset.type = "button";
+  reset.addEventListener("click", askResetSection);
+  box.append(reset);
   stage.append(box);
+}
+
+/* ---------- reset ---------- */
+// Clears the Know it / Still learning marks for the given cards in one deck, on this device only.
+function resetCards(setId, ids) {
+  const st = statusFor(setId);
+  ids.forEach(id => { delete st[id]; });
+  save();
+}
+
+function confirmReset(what, onConfirm) {
+  openSheet(sheet => {
+    sheetHead(sheet, "Reset progress?");
+    sheet.append(el("p", "ex", "This clears the Know it and Still learning marks on " + what +
+      ", so every card starts again as New. It only affects this browser."));
+    const row = el("div", "sheet-actions");
+    const yes = el("button", "btn primary", "Reset progress");
+    yes.type = "button";
+    yes.addEventListener("click", () => { closeSheet(); onConfirm(); });
+    const no = el("button", "btn", "Cancel");
+    no.type = "button";
+    no.addEventListener("click", closeSheet);
+    row.append(yes, no);
+    sheet.append(row);
+  }, "Reset progress");
+}
+
+// The section being studied: the whole deck, or the category / chunk picked in Options.
+function sectionCards() {
+  return CARDS.filter(c =>
+    (state.cat === "all" || c.cat === state.cat) &&
+    (state.chunk === "all" || chunkOf(c) === Number(state.chunk)));
+}
+
+function askResetSection() {
+  const cards = sectionCards();
+  const whole = cards.length === CARDS.length;
+  confirmReset(whole ? "all " + cards.length + " cards in " + SET.title : "these " + cards.length + " cards", () => {
+    resetCards(state.set, cards.map(c => c.id));
+    if (isShuffled()) shuffleDeck();
+    state.history = [];
+    document.getElementById("opts").open = false;
+    setMode("all");
+  });
 }
 
 function updateBar() {
@@ -807,6 +927,10 @@ function updateBar() {
   pos.textContent = d.length
     ? (Math.min(state.i + 1, d.length)) + " of " + d.length
     : "0 cards";
+
+  // a dot on Options whenever something in it changes what you see
+  document.getElementById("opts").classList.toggle("on",
+    state.cat !== "all" || state.chunk !== "all" || isShuffled() || !state.showPy);
 }
 
 /* ---------- actions ---------- */
@@ -876,7 +1000,7 @@ function wordRow(word) {
   h.lang = "zh-Hans";
   h.textContent = word.hz;
   r.append(h, el("span", "wpy", word.py));
-  if (word.mine) r.append(el("span", "mine", "IN YOUR DECK"));
+  if (word.mine) r.append(el("span", "mine", "in the decks"));
   r.append(el("span", "wen", word.en));
   return r;
 }
@@ -925,7 +1049,7 @@ function openEntry(ch, tab) {
     const head = el("div", "pop-head");
     const hz = el("span", "pop-hz t" + info.t, ch);
     hz.lang = "zh-Hans";
-    head.append(hz, el("span", "pop-py t" + info.t, info.py), speakBtn(ch, "Say"));
+    head.append(hz, el("span", "pop-py t" + info.t, info.py), speakBtn(ch));
     head.querySelector(".speak").style.marginLeft = "auto";
     sheet.append(head);
 
@@ -1029,8 +1153,8 @@ function fillSents(panel, ch, info) {
     box.append(line, el("div", "spy", st.py));
     const enr = el("div", "sen", st.en);
     box.append(enr);
-    if (st.mine) box.append(el("span", "mine", "FROM YOUR DECKS"));
-    box.append(speakBtn(st.hz, "Say"));
+    if (st.mine) box.append(el("span", "mine", "from the decks"));
+    box.append(speakBtn(st.hz));
     panel.append(box);
   });
 }
@@ -1067,19 +1191,22 @@ function openLegend() {
       sg.append(r);
     });
     sheet.append(sg);
-    sheet.append(el("div", "ex", "The bar under the title uses the same colors, scoped to whatever filter is on. A “not yet mastered” tag carries over from your Quizlet export — that term was still in your learning pile when you exported it."));
+    sheet.append(el("div", "ex", "The bar under the title uses the same colors, scoped to whatever filter is on."));
 
-    sheet.append(el("h4", null, "Category tag"));
-    sheet.append(el("div", "ex", "Every card carries a category — " + CATS.join(", ") + ". Use the category dropdown to drill into one group at a time, on its own or combined with the filters above."));
+    sheet.append(el("h4", null, "Categories and sections"));
+    sheet.append(el("div", "ex", "Every card carries a category, shown in red at the top of the card. Open Options to study one category, or one set of 25 cards, at a time."));
 
     sheet.append(el("h4", null, "Tapping a character"));
-    sheet.append(el("div", "ex", "Tap any character, on either side of the card, to open its entry. The popup gives you pinyin, one to three core meanings, and how to say it. “Full entry” opens three tabs: Dictionary (meanings, other readings, pronunciation), Words (compounds, with the ones already in your decks marked), and Sentences. Tapping a character never flips the card — use the Flip button or the arrow keys."));
+    sheet.append(el("div", "ex", "Tap any character, on either side of the card, to open its entry: pinyin, core meanings and how to say it, plus tabs for the words it appears in (the ones in these decks are marked) and example sentences. Short words sit in a 田字格, the dashed practice grid Chinese students learn to write in. Where a card shows two forms split by ／, both are correct. Tapping a character never flips the card."));
 
     sheet.append(el("h4", null, "Pronunciation notes"));
     sheet.append(el("div", "ex", "Every character gets its syllable broken into the initial consonant, the final, and the tone, each described in English. Where a sound is genuinely counterintuitive — q, x, r, the buzzy -i, ü — there is also a bolded “Watch out” line above it."));
 
     sheet.append(el("h4", null, "Shuffle"));
-    sheet.append(el("div", "ex", "Shuffle puts the deck in a random order and keeps it there \u2014 grading a card never reshuffles the ones you have not reached yet, and the order survives closing the tab. Filters pick from that same order, so it stays consistent. Tap it again to go back to deck order; \u201CStart over\u201D at the end of a run deals a fresh order."));
+    sheet.append(el("div", "ex", "Shuffle puts the deck in a random order and keeps it there \u2014 grading a card never reshuffles the ones you have not reached yet, and the order survives closing the tab. Filters pick from that same order, so it stays consistent. Turn it off to go back to deck order; \u201CStart over\u201D at the end of a run deals a fresh order."));
+
+    sheet.append(el("h4", null, "Reset progress"));
+    sheet.append(el("div", "ex", "Reset clears every Know it and Still learning mark in the deck, or in the category or set of cards you picked, so you can do a clean run. It\u2019s offered at the end of every run, in Options, and on the deck list. It only affects this browser."));
 
     sheet.append(el("h4", null, "Keyboard"));
     const keys = el("div", "keys");
@@ -1115,8 +1242,11 @@ function renderHome() {
     const b = document.createElement("div");
     b.className = "deck";
 
-    const num = el("span", "num", String(idx + 1).padStart(2, "0"));
-    const name = el("span", "name", set.title);
+    const num = el("span", "num", cnNum(idx + 1));
+    num.lang = "zh-Hans";
+    num.setAttribute("aria-label", "Deck " + (idx + 1));
+    const name = el("span", "name");
+    name.append(...titleNodes(set.title));
     const count = el("span", "count", set.cards.length + " cards");
     const note = el("span", "note", set.subtitle);
 
@@ -1129,23 +1259,25 @@ function renderHome() {
     bar.append(bk, bl);
     mini.append(bar, el("span", "pct", known + " / " + set.cards.length + " known"));
 
-    const tags = el("span", "tags");
-    set.cats.forEach(([label, n]) => {
-      const t = el("span", "tag");
-      t.append(label + " ", el("b", null, String(n)));
-      tags.append(t);
-    });
-
     const actions = el("span", "deck-actions");
     const studyBtn = el("button", "btn primary", "Study");
     studyBtn.type = "button";
     studyBtn.addEventListener("click", () => go(set.id));
-    const listBtn = el("button", "btn", "View word list");
+    const listBtn = el("button", "btn", "Word list");
     listBtn.type = "button";
     listBtn.addEventListener("click", () => goList(set.id));
     actions.append(studyBtn, listBtn);
+    if (known + learning) {
+      const resetBtn = el("button", "btn subtle", "Reset progress");
+      resetBtn.type = "button";
+      resetBtn.addEventListener("click", () => confirmReset("all " + set.cards.length + " cards in " + set.title, () => {
+        resetCards(set.id, set.cards.map(c => c.id));
+        renderHome();
+      }));
+      actions.append(resetBtn);
+    }
 
-    b.append(num, name, count, note, mini, tags, actions);
+    b.append(num, name, count, note, mini, actions);
     decks.append(b);
   });
 
@@ -1163,7 +1295,7 @@ const pyBtn = document.getElementById("t-py");
 
 function syncPy() {
   pyBtn.setAttribute("aria-pressed", String(state.showPy));
-  pyBtn.textContent = state.showPy ? "Pinyin on front" : "Pinyin hidden";
+  pyBtn.textContent = "Pinyin on front";
   pyBtn.title = state.showPy
     ? "Tap to hide pinyin on the front of the card"
     : "Tap to show pinyin on the front of the card";
@@ -1179,7 +1311,7 @@ pyBtn.addEventListener("click", () => {
 function syncShuffle() {
   const on = isShuffled();
   shuffleBtn.setAttribute("aria-pressed", String(on));
-  shuffleBtn.textContent = on ? "Shuffled" : "Shuffle";
+  shuffleBtn.textContent = "Shuffle";
   shuffleBtn.title = on ? "Tap to go back to deck order" : "Put this deck in a random order";
 }
 
@@ -1229,7 +1361,8 @@ function openSet(setId) {
   document.querySelectorAll("[data-mode]").forEach(b => {
     b.setAttribute("aria-pressed", String(b.dataset.mode === "all"));
   });
-  document.getElementById("set-title").textContent = set.title;
+  document.getElementById("set-title").replaceChildren(...titleNodes(set.title));
+  document.getElementById("opts").open = false;
   buildRank();
   fillFilters();
   syncPy();
@@ -1265,7 +1398,7 @@ function openList(setId) {
   closePop();
   listSetId = setId;
 
-  document.getElementById("list-title").textContent = set.title;
+  document.getElementById("list-title").replaceChildren(...titleNodes(set.title));
   document.getElementById("list-subtitle").textContent = set.subtitle;
   document.getElementById("list-count").textContent = set.cards.length + " cards";
 
@@ -1376,11 +1509,17 @@ chunkSel.addEventListener("change", () => {
 });
 
 
-document.getElementById("legend-btn").addEventListener("click", openLegend);
+const optsEl = document.getElementById("opts");
+document.getElementById("legend-btn").addEventListener("click", () => { optsEl.open = false; openLegend(); });
+document.getElementById("reset-btn").addEventListener("click", () => { optsEl.open = false; askResetSection(); });
+document.addEventListener("click", ev => {
+  if (optsEl.open && !optsEl.contains(ev.target)) optsEl.open = false;   // tap outside closes Options
+});
 
 document.addEventListener("keydown", ev => {
   if (ev.key === "Escape") {
     if (sheetEl) { closeSheet(); return; }
+    if (optsEl.open) { optsEl.open = false; return; }
   }
   if (sheetEl || !SET) return;
   const tag = (ev.target.tagName || "").toLowerCase();
