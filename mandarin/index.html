@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#16120F">
 <title>中文 Mandarin Decks · George Ranes</title>
 <meta name="description" content="Interactive Mandarin flashcards and character dictionary built by George Ranes.">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
@@ -11,46 +12,37 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
 <style>
   /* ==========================================================================
-     Ink & cinnabar: rice paper, ink-dark text and one seal red (朱砂).
+     Ink & cinnabar: dark ink, warm paper-toned text and one seal red (朱砂).
      Traditional touches are kept functional: the seal logo, the 田字格 practice
      grid behind characters, and Chinese numerals on the decks.
      ========================================================================== */
+  /* Dark ink is the default for everyone, whatever the device's light/dark setting. */
   :root {
+    color-scheme: dark;
+    --paper: #16120F;  --surface: #1F1A16;  --surface-2: #2A231E;
+    --ink: #F1E8DB;    --muted: #B6A999;    --faint: #887C6F;   --line: #3A3029;
+    --red: #E0705C;    --red-wash: #3A1F1A;                       /* red text and lines, lifted to read on dark */
+    --btn: #B5352B;    --btn-deep: #C8433A;  --on-btn: #FFF6EF;    /* filled buttons and the seal: the seal red */
+    --grid: rgba(224, 112, 92, .36);  --grid-dash: rgba(224, 112, 92, .26);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
+    --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #A59A8E;
+    --unseen: #7E7468; --learning: #E0A94A; --known: #5FB98A;
+    --learn-bg: #33270F; --known-bg: #12301F;
+    --serif: "EB Garamond", Garamond, Georgia, serif;
+    --han: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  }
+  /* Rice-paper light theme, kept for <html data-theme="light"> */
+  :root[data-theme="light"] {
+    color-scheme: light;
     --paper: #F5EFE3;  --surface: #FFFCF6;  --surface-2: #EFE7D8;
     --ink: #221C17;    --muted: #6D6156;    --faint: #998D80;   --line: #E2D7C5;
-    --red: #B5352B;    --red-wash: #F7E6DF;                       /* accents and red text */
-    --btn: #B5352B;    --btn-deep: #922A22;  --on-btn: #FFF8F0;    /* filled buttons and the seal */
+    --red: #B5352B;    --red-wash: #F7E6DF;
+    --btn: #B5352B;    --btn-deep: #922A22;  --on-btn: #FFF8F0;
     --grid: rgba(181, 53, 43, .30);  --grid-dash: rgba(181, 53, 43, .22);
     --shadow: 0 1px 2px rgba(60, 40, 20, .05), 0 10px 28px rgba(60, 40, 20, .08);
     --t1: #C2410C; --t2: #15803D; --t3: #6D28D9; --t4: #BE185D; --t5: #7D7268;
     --unseen: #A89C8E; --learning: #B7791F; --known: #2E7D4F;
     --learn-bg: #FBF1DE; --known-bg: #E6F2E9;
-    --serif: "EB Garamond", Garamond, Georgia, serif;
-    --han: "Noto Serif SC", "Songti SC", "SimSun", serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper: #16120F;  --surface: #1F1A16;  --surface-2: #2A231E;
-      --ink: #F1E8DB;    --muted: #B6A999;    --faint: #887C6F;   --line: #3A3029;
-      --red: #E27A66;    --red-wash: #3A1F1A;
-      --btn: #B4473A;    --btn-deep: #C9584A;  --on-btn: #FFF6EF;
-      --grid: rgba(226, 122, 102, .36);  --grid-dash: rgba(226, 122, 102, .26);
-      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
-      --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #A59A8E;
-      --unseen: #7E7468; --learning: #E0A94A; --known: #5FB98A;
-      --learn-bg: #33270F; --known-bg: #12301F;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #16120F;  --surface: #1F1A16;  --surface-2: #2A231E;
-    --ink: #F1E8DB;    --muted: #B6A999;    --faint: #887C6F;   --line: #3A3029;
-    --red: #E27A66;    --red-wash: #3A1F1A;
-    --btn: #B4473A;    --btn-deep: #C9584A;  --on-btn: #FFF6EF;
-    --grid: rgba(226, 122, 102, .36);  --grid-dash: rgba(226, 122, 102, .26);
-    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
-    --t1: #FB923C; --t2: #4ADE80; --t3: #A78BFA; --t4: #F472B6; --t5: #A59A8E;
-    --unseen: #7E7468; --learning: #E0A94A; --known: #5FB98A;
-    --learn-bg: #33270F; --known-bg: #12301F;
   }
 
   /* ---------- base ---------- */
