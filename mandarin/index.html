@@ -99,6 +99,34 @@
   .home header { padding-block: 26px 4px; }
   .home h1 { display: flex; align-items: center; gap: 16px; margin: 0 0 14px; font-size: clamp(30px, 7vw, 38px); font-weight: 500; line-height: 1.1; }
   .home .lede { margin: 0; color: var(--muted); max-width: 60ch; font-size: 18px; }
+  /* Writing Practice: a separate page, linked beside the title */
+  .intro { display: grid; grid-template-columns: 1fr 210px; gap: 28px; align-items: start; }
+  .practice {
+    display: flex; flex-direction: column; gap: 10px; color: var(--ink); text-decoration: none;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 14px 16px; box-shadow: var(--shadow);
+  }
+  .practice:hover { border-color: var(--red); }
+  .practice-hz {
+    width: 56px; height: 56px; display: grid; place-items: center;
+    font-size: 36px; line-height: 1; color: var(--red);
+    border: 1px solid var(--grid);
+    background-image:
+      repeating-linear-gradient(90deg, var(--grid-dash) 0 4px, transparent 4px 8px),
+      repeating-linear-gradient(0deg, var(--grid-dash) 0 4px, transparent 4px 8px);
+    background-size: 100% 1px, 1px 100%;
+    background-position: center, center;
+    background-repeat: no-repeat;
+  }
+  .practice-text { display: flex; flex-direction: column; gap: 4px; }
+  .practice-name { font-size: 20px; font-weight: 600; line-height: 1.2; }
+  .practice:hover .practice-name { color: var(--red); }
+  .practice-note { font-size: 15px; color: var(--muted); line-height: 1.35; }
+  .practice-tag {
+    align-self: start; margin-top: 4px; font-size: 14px; color: var(--learning);
+    background: var(--learn-bg); border-radius: 99px; padding: 1px 9px;
+    font-variant-caps: all-small-caps; letter-spacing: .08em;
+  }
   .totals { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
   .totals div { display: flex; flex-direction: column; }
   .totals b { font-size: 30px; font-weight: 500; line-height: 1.05; font-variant-numeric: lining-nums tabular-nums; }
@@ -382,6 +410,9 @@
   }
   @media (max-width: 640px) {
     .kbd-hint { display: none; }
+    .intro { grid-template-columns: 1fr; gap: 18px; }
+    .practice { flex-direction: row; align-items: center; gap: 14px; }
+    .practice-hz { flex: none; }
     .word-row { grid-template-columns: 1fr auto; grid-template-areas: "hz pill" "py py" "en en"; row-gap: 4px; }
     .word-row .hz { grid-area: hz; }
     .word-row .pill { grid-area: pill; justify-self: end; }
@@ -414,8 +445,20 @@
   <div id="home" class="home">
     <a class="site-link" href="../#mandarin">← George Ranes</a>
     <header>
-      <h1><span class="seal" aria-hidden="true"><span>中</span><span>文</span></span><span>Mandarin Decks</span></h1>
-      <p class="lede">Every vocabulary set I’ve worked through, rebuilt as flashcards with a built-in character dictionary. Tap any character for its pinyin, meaning, pronunciation, related words and an example sentence.</p>
+      <div class="intro">
+        <div>
+          <h1><span class="seal" aria-hidden="true"><span>中</span><span>文</span></span><span>Mandarin Decks</span></h1>
+          <p class="lede">Every vocabulary set I’ve worked through, rebuilt as flashcards with a built-in character dictionary. Tap any character for its pinyin, meaning, pronunciation, related words and an example sentence.</p>
+        </div>
+        <a class="practice" href="writing-practice.html">
+          <span class="practice-hz han" aria-hidden="true">写</span>
+          <span class="practice-text">
+            <span class="practice-name">Writing Practice</span>
+            <span class="practice-note">Write each word stroke by stroke and check the order.</span>
+            <span class="practice-tag">Work in progress</span>
+          </span>
+        </a>
+      </div>
       <div class="totals">
         <div><b id="t-cards">0</b><span>Cards</span></div>
         <div><b id="t-sets">0</b><span>Decks</span></div>
