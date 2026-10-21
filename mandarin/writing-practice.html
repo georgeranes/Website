@@ -293,7 +293,8 @@
   .empty h2 { margin: 0; font-size: 26px; font-weight: 500; color: var(--ink); }
   .empty p { margin: 0; max-width: 40ch; text-wrap: pretty; }
 
-  /* ===== v4: everything fits the screen (phone: one column, laptop: board left, controls right) ===== */
+  /* ===== v4: everything fits the screen in one column: the card (word, writing tools, box,
+     feedback), then the flashcard grading below it ===== */
   html { height: 100%; }
   body.practicing { padding-block: 8px; }
   body.practicing .credits { display: none; }
@@ -334,26 +335,52 @@
   svg#board { aspect-ratio: auto; flex: none; }
 
   .p-right { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  #practice .feedback { height: clamp(68px, 12vh, 130px); height: clamp(68px, 12dvh, 130px); overflow: auto; min-height: 0; padding: 10px 14px; gap: 6px; }
+  #practice .feedback { flex: none; height: clamp(68px, 12vh, 130px); height: clamp(68px, 12dvh, 130px); overflow: auto; min-height: 0; padding: 10px 14px; gap: 6px; }
   #practice .feedback h2 { font-size: 21px; }
   #practice .feedback p, #practice .feedback li { font-size: 16.5px; line-height: 1.4; }
   .feedback .fbtns { position: sticky; bottom: -10px; background: inherit; padding: 6px 0 2px; margin-top: auto; }
   #practice .grade .btn { min-height: 46px; font-size: 20px; } #practice .grade .btn.quiet { font-size: 15px; padding: 0 12px; }
   #practice .actions { gap: 8px; }
-  @media (max-width: 759px), (max-aspect-ratio: 5/4) { .kbd { display: none; } }
-  @media (min-width: 560px) and (max-aspect-ratio: 5/4) { body.practicing .wrap { max-width: 640px; } }
-
-  @media (min-width: 760px) and (min-aspect-ratio: 5/4) {
-    body.practicing .wrap { max-width: 1100px; }
-    .p-main { flex-direction: row; gap: 22px; }
-    .p-left { flex: 0 0 var(--lw, 56%); }
-    .p-right { flex: 1; min-width: 0; }
-    #practice .feedback { flex: 1; height: auto; }
-    .kbd { text-align: left; }
-    #practice .feedback h2 { font-size: 26px; }
-    #practice .feedback p, #practice .feedback li { font-size: 18.5px; }
-    #practice .feedback { padding: 14px 18px; }
+  /* writing tools: on a phone Check / Undo / Help get their own row under the stroke count;
+     on a wider screen they share the row, leaving more height for the box */
+  .toolbar { flex-wrap: wrap; row-gap: 6px; }
+  .toolbar .actions { flex: 1 0 100%; }
+  @media (max-width: 559px) {                      /* a word's mark goes under its number so Next stays on screen */
+    #practice .progress { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.15; }
+    #practice .progress .sep { display: none; }
+    #practice .progress .pill { font-size: 11.5px; }
   }
+  @media (max-width: 440px) {
+    #practice .grade { gap: 8px; }
+    #practice .grade .btn { font-size: 18px; padding: 0 8px; white-space: nowrap; }
+  }
+  @media (min-width: 560px) {
+    #practice .title { flex-direction: row; flex-wrap: wrap; column-gap: 14px; align-items: baseline; justify-content: center; }
+    .toolbar .counts { flex: 0 1 auto; text-align: left; }
+    .toolbar .actions { flex: 1 0 auto; order: 2; grid-template-columns: repeat(3, minmax(90px, 1fr)); max-width: 420px; margin-left: auto; }
+    .toolbar #clear { order: 3; }
+  }
+  @media (max-width: 759px), (max-aspect-ratio: 5/4) { .kbd { display: none; } }
+  .kbd { text-align: center; }
+  @media (min-width: 560px) { body.practicing .wrap { max-width: 720px; } }
+  @media (min-height: 860px) {
+    #practice .feedback { height: clamp(68px, 13vh, 150px); height: clamp(68px, 13dvh, 150px); padding: 12px 16px; }
+    #practice .feedback h2 { font-size: 23px; }
+    #practice .feedback p, #practice .feedback li { font-size: 17.5px; }
+  }
+
+  /* grading: the card flies right for Know it and left for Still learning */
+  body.practicing { overflow-x: hidden; }
+  #practice .frame { position: relative; transition: border-color .15s, box-shadow .15s; }
+  #practice .frame[data-fly="known"] { border-color: var(--green-line); box-shadow: 0 0 0 3px rgba(93,185,138,.35); }
+  #practice .frame[data-fly="learning"] { border-color: var(--amber-line); box-shadow: 0 0 0 3px rgba(224,168,58,.35); }
+  #practice .frame[data-fly]::after {
+    position: absolute; top: 18px; z-index: 2; pointer-events: none;
+    padding: 4px 12px; border: 2px solid; border-radius: 4px;
+    font-size: 20px; letter-spacing: .14em; text-transform: uppercase; background: var(--surface);
+  }
+  #practice .frame[data-fly="known"]::after { content: "Know it"; left: 18px; color: var(--green); transform: rotate(-8deg); }
+  #practice .frame[data-fly="learning"]::after { content: "Still learning"; right: 18px; color: var(--amber); transform: rotate(8deg); }
   .done, .empty { flex: 1; justify-content: center; }
   .filters .ct { font-size: .72em; color: var(--faint); font-variant-numeric: tabular-nums; margin-left: 2px; vertical-align: 2px; }
   .filters .tabbtn[aria-pressed="true"] .ct { color: var(--muted); }
@@ -445,6 +472,7 @@
         <div class="fld wide"><span class="label">Learning mode</span>
           <button class="chip" id="o-learn" type="button" aria-pressed="false">Off</button>
           <p class="hint" style="margin-top:2px">Checks each stroke as you write it, and after Show me how it offers a Fix it button that swaps your wrong strokes for the right ones.</p></div>
+        <p class="hint wide">Erase one stroke: with a stylus, hold the side button and rub over it; with a mouse, right-click and drag over it.</p>
         <p class="hint wide">Know it and Still learning are remembered in this browser, per word.</p>
       </div>
       </div>
@@ -468,6 +496,11 @@
               <div class="tabs" id="tabs" role="tablist" aria-label="Characters in this word"></div>
               <div class="counts" id="counts" aria-live="polite"></div>
               <button class="btn quiet" id="clear" type="button">Clear</button>
+              <div class="actions">
+                <button class="btn primary" id="check" type="button">Check</button>
+                <button class="btn" id="undo" type="button">Undo</button>
+                <button class="btn amber" id="help" type="button">Help</button>
+              </div>
             </div>
             <div class="board-wrap" id="board-wrap">
               <svg id="board" viewBox="0 0 1024 1024" role="img" aria-label="Writing box. Draw the character with your finger or mouse.">
@@ -480,23 +513,18 @@
                 <g id="demo"></g>
               </svg>
             </div>
+            <div class="feedback" id="feedback" data-kind="idle" aria-live="polite"></div>
           </div>
         </div>
       </div>
 
       <div class="p-right">
-        <div class="actions">
-          <button class="btn primary" id="check" type="button">Check</button>
-          <button class="btn" id="undo" type="button">Undo</button>
-          <button class="btn amber" id="help" type="button">Help</button>
-        </div>
-        <div class="feedback" id="feedback" data-kind="idle" aria-live="polite"></div>
         <div class="grade">
           <button class="btn amber" id="g-still" type="button">Still learning</button>
           <button class="btn quiet" id="g-undo" type="button" title="Undo your last mark" aria-label="Undo last mark" disabled>↶ Undo</button>
           <button class="btn green" id="g-know" type="button">Know it</button>
         </div>
-        <div class="kbd">Enter check · H help · ⌫ undo · ← still learning · → know it<br>Stylus: hold the side button and rub over a stroke to erase it · Mouse: right-click and drag</div>
+        <div class="kbd">Enter check · H help · ⌫ undo · ← still learning · → know it</div>
       </div>
     </div>
 
@@ -1153,21 +1181,11 @@ function wordDone() { return cur.chars.every(c => c.state === "ok" || c.state ==
 /* size the writing box to the room that is left, so the whole screen fits without scrolling */
 function fit() {
   if ($("practice").hidden || $("card").hidden) return;
-  const wrap = $("board-wrap"), main = $("card"), left = document.querySelector(".p-left");
-  const two = matchMedia("(min-width: 760px) and (min-aspect-ratio: 5/4)").matches;
-  const size = () => Math.max(120, Math.floor(Math.min(wrap.clientHeight, wrap.clientWidth)));
-  if (two) {
-    main.style.setProperty("--lw", "58%");
-    const padX = left.clientWidth - wrap.clientWidth;
-    let s = Math.min(Math.max(120, Math.floor(wrap.clientHeight)), Math.floor(main.clientWidth * 0.6) - padX);
-    main.style.setProperty("--lw", (s + padX) + "px");
-    s = Math.min(s, size());
-    $("board").style.width = $("board").style.height = s + "px";
-  } else {
-    main.style.removeProperty("--lw");
-    const s = size();
-    $("board").style.width = $("board").style.height = s + "px";
-  }
+  const wrap = $("board-wrap"), fb = $("feedback");
+  wrap.style.flex = ""; fb.style.flexGrow = "";                 // measure the room with the box taking all of it
+  const s = Math.max(120, Math.floor(Math.min(wrap.clientHeight, wrap.clientWidth)));
+  $("board").style.width = $("board").style.height = s + "px";
+  wrap.style.flex = `0 0 ${s}px`; fb.style.flexGrow = "1";     // any height the box can't use goes to the feedback
 }
 const refit = () => requestAnimationFrame(fit);
 window.addEventListener("resize", refit);
@@ -1225,7 +1243,7 @@ function renderTabs() {
 function updateNav() {
   const k = stOf(cur.it);
   $("progress").innerHTML = `Word ${qi + 1} of ${pool.length}` +
-    (k === "known" ? ` · <span class="pill k">known</span>` : k === "learning" ? ` · <span class="pill l">still learning</span>` : "");
+    (k === "known" ? `<span class="sep"> · </span><span class="pill k">known</span>` : k === "learning" ? `<span class="sep"> · </span><span class="pill l">still learning</span>` : "");
   $("prev").disabled = qi === 0;
   const done = wordDone() && cur.chars.some(c => c.state === "ok");
   const clean = cur.chars.every(c => c.state === "skip" || (c.firstOk && !c.helped));
@@ -1676,15 +1694,35 @@ function go(n) {
   loadWord(); window.scrollTo(0, 0);
 }
 function syncMarkUndo() { $("g-undo").disabled = !marks.length; }
+/* the card flies off to the right (+1, Know it) or left (-1, Still learning), then the next one settles in */
+let sliding = false;
+function slide(dir, then) {
+  const f = $("frame");
+  if (reduced() || !f.animate) { then(); return; }
+  sliding = true;
+  f.dataset.fly = dir > 0 ? "known" : "learning";
+  const out = f.animate([
+    { transform: "none", opacity: 1 },
+    { transform: `translateX(${dir * 70}%) rotate(${dir * 7}deg)`, opacity: 0 }
+  ], { duration: 340, easing: "cubic-bezier(.5, 0, .75, .4)", fill: "forwards" });
+  out.finished.catch(() => {}).then(() => {
+    delete f.dataset.fly;
+    then();
+    out.cancel();
+    f.animate([{ transform: "scale(.96)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 200, easing: "ease-out" });
+    sliding = false;
+  });
+}
 function grade(s) {
-  if (!cur) return;
-  marks.push({ hz: cur.it.hz, prev: status[cur.it.hz], qi }); if (marks.length > 200) marks.shift();
+  if (!cur || sliding) return;
+  marks.push({ hz: cur.it.hz, prev: status[cur.it.hz], qi, dir: s === "known" ? 1 : -1 }); if (marks.length > 200) marks.shift();
   status[cur.it.hz] = s; store.set(LS_STATUS, status);
   renderStats();
-  go(qi + 1);
   syncMarkUndo();
+  slide(s === "known" ? 1 : -1, () => go(qi + 1));
 }
 function undoMark() {
+  if (sliding) return;
   const m = marks.pop();
   if (!m) return;
   if (m.prev) status[m.hz] = m.prev; else delete status[m.hz];
@@ -1693,6 +1731,9 @@ function undoMark() {
   qi = m.qi;
   renderStats(); loadWord(); refit(); syncMarkUndo();
   window.scrollTo(0, 0);
+  if (m.dir && !reduced() && $("frame").animate)             // the card comes back from the side it left by
+    $("frame").animate([{ transform: `translateX(${m.dir * 70}%) rotate(${m.dir * 7}deg)`, opacity: 0 }, { transform: "none", opacity: 1 }],
+      { duration: 300, easing: "cubic-bezier(.25, .6, .4, 1)" });
 }
 $("g-undo").addEventListener("click", undoMark);
 $("g-undo2").addEventListener("click", undoMark);
