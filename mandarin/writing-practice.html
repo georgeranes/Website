@@ -335,7 +335,8 @@
   svg#board { aspect-ratio: auto; flex: none; }
 
   .p-right { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  #practice .feedback { flex: none; height: clamp(68px, 12vh, 130px); height: clamp(68px, 12dvh, 130px); overflow: auto; min-height: 0; padding: 10px 14px; gap: 6px; }
+  /* the feedback is as tall as its text (the box shrinks to make room), so it never needs scrolling */
+  #practice .feedback { flex: none; height: auto; min-height: clamp(68px, 12vh, 130px); min-height: clamp(68px, 12dvh, 130px); overflow: auto; padding: 10px 14px; gap: 6px; }
   #practice .feedback h2 { font-size: 21px; }
   #practice .feedback p, #practice .feedback li { font-size: 16.5px; line-height: 1.4; }
   .feedback .fbtns { position: sticky; bottom: -10px; background: inherit; padding: 6px 0 2px; margin-top: auto; }
@@ -373,9 +374,41 @@
   .kbd { text-align: center; }
   @media (min-width: 560px) { body.practicing .wrap { max-width: 720px; } }
   @media (min-height: 860px) {
-    #practice .feedback { height: clamp(68px, 13vh, 150px); height: clamp(68px, 13dvh, 150px); padding: 12px 16px; }
+    #practice .feedback { min-height: clamp(68px, 13vh, 150px); min-height: clamp(68px, 13dvh, 150px); padding: 12px 16px; }
     #practice .feedback h2 { font-size: 23px; }
     #practice .feedback p, #practice .feedback li { font-size: 17.5px; }
+  }
+
+  .feedback .pager { display: none; align-items: center; gap: 4px; font-size: 15px; color: var(--muted); }
+  #practice .feedback .pager .btn { min-height: 32px; padding: 0 12px; font-size: 20px; line-height: 1; }
+  @media (max-width: 859px) {
+    .feedback li:not(.on) { display: none; }
+    .feedback .pager { display: flex; margin-right: auto; }
+    .feedback .fbtns:not(:has(.how)) { padding-block: 0; }
+    #practice .feedback ul { padding-left: 0; list-style: none; }
+    /* the heading and the stroke count already say what the summary line says */
+    .feedback .lead:has(+ ul), .feedback .more, .feedback .tip { display: none; }
+    #practice .feedback h2 { font-size: 19px; }
+    #practice .feedback p, #practice .feedback li { font-size: 15.5px; line-height: 1.35; }
+    #practice .feedback .how { min-height: 36px; padding: 4px 14px; font-size: 16px; }
+    .feedback .fbtns { align-items: center; margin-top: 2px; }
+  }
+
+  /* wide screens: word, writing tools and box on the left, feedback in a column on the right */
+  @media (min-width: 860px) {
+    body.practicing .wrap { max-width: 1120px; }
+    #practice .frame-in {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 34%);
+      grid-template-rows: auto auto minmax(0, 1fr); column-gap: 18px; row-gap: 6px;
+    }
+    #practice .title { grid-area: 1 / 1; }
+    #practice .toolbar { grid-area: 2 / 1; }
+    #practice .board-wrap { grid-area: 3 / 1; }
+    #practice .feedback { grid-area: 1 / 2 / 4 / 3; min-height: 0; padding: 16px 18px; gap: 10px; }
+    #practice .feedback h2 { font-size: 24px; }
+    #practice .feedback p, #practice .feedback li { font-size: 17.5px; }
+    .feedback .fbtns { position: static; margin-top: 4px; }
+    .feedback .fbtns:not(:has(.how)) { display: none; }       /* holds only the phone's note arrows */
   }
 
   /* grading: the card flies right for Know it and left for Still learning */
@@ -1473,6 +1506,7 @@ function setFeedback(kind, v, keepHeight) {
   f.style.minHeight = keepHeight ? f.offsetHeight + "px" : "";
   f.dataset.kind = kind;
   f.replaceChildren();
+  refit();                                                      // the box makes room for the new text
   const add = (tag, text, cls) => { const e = document.createElement(tag); e.textContent = text; if (cls) e.className = cls; f.append(e); return e; };
   if (!v) {
     const c = cur && cc();
@@ -1482,19 +1516,39 @@ function setFeedback(kind, v, keepHeight) {
     return;
   }
   add("h2", v.title);
-  add("p", v.lead);
+  add("p", v.lead, "lead");
+  let pg = null;
   if (v.items && v.items.length) {
     const ul = document.createElement("ul");
-    v.items.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.append(li); });
+    v.items.forEach((t, i) => { const li = document.createElement("li"); li.textContent = t; li.classList.toggle("on", !i); ul.append(li); });
     f.append(ul);
+    // on a phone the notes show one at a time, so the panel never needs scrolling
+    if (v.items.length > 1) {
+      const n = v.items.length;
+      pg = document.createElement("div");
+      pg.className = "pager";
+      let at = 0;
+      const prev = document.createElement("button"), next = document.createElement("button"), lab = document.createElement("span");
+      prev.type = next.type = "button"; prev.className = next.className = "btn quiet";
+      prev.textContent = "‹"; next.textContent = "›";
+      prev.setAttribute("aria-label", "Previous note"); next.setAttribute("aria-label", "Next note");
+      const show = () => {
+        [...ul.children].forEach((li, i) => li.classList.toggle("on", i === at));
+        lab.textContent = `Note ${at + 1} of ${n}`; prev.disabled = !at; next.disabled = at === n - 1;
+      };
+      prev.addEventListener("click", () => { at--; show(); });
+      next.addEventListener("click", () => { at++; show(); });
+      pg.append(prev, lab, next); show();
+    }
   }
-  if (v.more) add("p", `…and ${v.more} more.`, "muted");
+  if (v.more) add("p", `…and ${v.more} more.`, "muted more");
   if (v.extra) add("p", v.extra, "muted");
   const canFix = v.fix && v.fix.wrong.length && !demoing;
-  if (canFix && !v.postDemo) add("p", "Tap any stroke on the board to erase just that one.", "muted");
-  if (canFix || (v.postDemo && !demoing)) {
+  if (canFix && !v.postDemo) add("p", "Tap any stroke on the board to erase just that one.", "muted tip");
+  if (pg || canFix || (v.postDemo && !demoing)) {                // the note arrows share a row with the buttons
     const row = document.createElement("div");
     row.className = "fbtns";
+    if (pg) row.append(pg);
     const btn = (label, cls, fn) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn " + cls; b.textContent = label; b.addEventListener("click", fn); row.append(b); };
     if (canFix) btn("Show me how", "amber how", showHow);
     if (canFix && v.postDemo && opts.learn) btn("Fix it", "green how", fixIt);
