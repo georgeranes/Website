@@ -396,6 +396,34 @@
     #practice .feedback p, #practice .feedback li { font-size: 17.5px; }
   }
 
+  /* ---------- practice mode: a sandbox with the stroke-order chart ---------- */
+  .prac-btn { align-self: center; }
+  #practice .title .prac-btn { min-height: 30px; padding: 2px 10px; font-size: 15px; border-color: var(--line); }
+  #practice .title .prac-btn:hover { color: #7FB8E8; border-color: #4E7FA8; }
+  #practice .title .prac-btn[aria-pressed="true"] { color: #7FB8E8; border-color: #4E7FA8; background: #10202E; }
+  #practice .frame[data-practice] { border-color: #4E7FA8; }
+  #practice .frame[data-practice] .frame-in { border-color: #23384B; }
+
+  .chart { display: flex; flex-direction: column; gap: 6px; flex: none; }
+  .chart-h { display: flex; align-items: baseline; gap: 10px; font-size: 14.5px; color: var(--muted); }
+  .chart-h .label { color: #7FB8E8; }
+  .chart-h .hz { font-family: var(--hanzi); font-size: 20px; color: var(--ink); line-height: 1; }
+  .chart-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 4px; }
+  /* one 田字格 square per step: the whole character first, then each stroke added in red */
+  .chart-cell { display: block; width: 100%; height: auto; aspect-ratio: 1; background: var(--bg); border: 1px solid var(--red-dim); border-radius: 2px; }
+  .chart-cell .cg { stroke: var(--red-dim); stroke-width: 1.4; stroke-dasharray: 5 4; fill: none; }
+  .chart-cell .cg.soft { opacity: .55; }
+  .chart-cell .cs { fill: none; stroke: var(--ink); stroke-width: 74; stroke-linecap: round; stroke-linejoin: round; }
+  .chart-cell .cs.new { stroke: var(--red-hi); }
+  .chart-cell .cs-dot { fill: var(--red-hi); stroke: var(--bg); stroke-width: 14; }
+  .chart-cell .cn { font-family: var(--serif); font-size: 17px; fill: var(--faint); }
+  .chart-cell.full { border-color: var(--line); }
+  .chart-cell.next { border-color: #7FB8E8; box-shadow: 0 0 0 1px #7FB8E8; }
+  /* practice notes keep to the note and its buttons; the "undo or clear" and erase tips repeat what the buttons do */
+  #practice .frame[data-practice] .feedback:not([data-kind="ok"]) .extra,
+  #practice .frame[data-practice] .feedback .tip { display: none; }
+  .chart-none { margin: 0; color: var(--muted); font-size: 15px; }
+
   .feedback .pager { display: none; align-items: center; gap: 4px; font-size: 15px; color: var(--muted); }
   #practice .feedback .pager .btn { min-height: 32px; padding: 0 12px; font-size: 20px; line-height: 1; }
   @media (max-width: 859px) {
@@ -409,6 +437,12 @@
     #practice .feedback p, #practice .feedback li { font-size: 15.5px; line-height: 1.35; }
     #practice .feedback .how { min-height: 36px; padding: 4px 14px; font-size: 16px; }
     .feedback .fbtns { align-items: center; margin-top: 2px; }
+    /* one column: the stroke-order chart sits above the box, the feedback below it */
+    #practice .side { display: contents; }
+    .chart-grid { grid-template-rows: auto; grid-auto-rows: 0; overflow: hidden; row-gap: 0; }
+    #practice .chart { order: 1; }
+    #practice .board-wrap { order: 2; }
+    #practice .feedback { order: 3; }
   }
 
   /* wide screens: word, writing tools and box on the left, feedback in a column on the right */
@@ -421,7 +455,9 @@
     #practice .title { grid-area: 1 / 1; }
     #practice .toolbar { grid-area: 2 / 1; }
     #practice .board-wrap { grid-area: 3 / 1; }
-    #practice .feedback { grid-area: 1 / 2 / 4 / 3; min-height: 0; padding: 16px 18px; gap: 10px; }
+    #practice .side { grid-area: 1 / 2 / 4 / 3; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+    #practice .feedback { flex: 1 1 auto; min-height: 0; padding: 16px 18px; gap: 10px; }
+    .chart-grid { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 6px; }
     #practice .feedback h2 { font-size: 24px; }
     #practice .feedback p, #practice .feedback li { font-size: 17.5px; }
     .feedback .fbtns { position: static; margin-top: 4px; }
@@ -550,6 +586,7 @@
             <div class="title">
               <div class="py" id="py" lang="zh-Latn-pinyin"></div>
               <div class="en"><span id="en"></span><span class="hz-reveal" id="hz" hidden></span></div>
+              <button class="btn quiet prac-btn" id="prac" type="button" aria-pressed="false">Practice mode</button>
             </div>
             <div class="toolbar">
               <div class="tb-left">
@@ -574,7 +611,10 @@
                 <g id="demo"></g>
               </svg>
             </div>
-            <div class="feedback" id="feedback" data-kind="idle" aria-live="polite"></div>
+            <div class="side">
+              <div class="chart" id="chart" hidden></div>
+              <div class="feedback" id="feedback" data-kind="idle" aria-live="polite"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -585,7 +625,7 @@
           <button class="btn quiet" id="g-undo" type="button" title="Undo your last mark" aria-label="Undo last mark" disabled>↶ Undo</button>
           <button class="btn green" id="g-know" type="button">Know it</button>
         </div>
-        <div class="kbd">Enter check · H help · ⌫ undo · ← still learning · → know it</div>
+        <div class="kbd">Enter check · H help · ⌫ undo · P practice · ← still learning · → know it</div>
       </div>
     </div>
 
@@ -1236,7 +1276,8 @@ function splitPy(it) {                    // one pinyin syllable per character, 
   for (const L of lens) { out.push(glued.slice(pos, pos + L)); pos += L; }
   return out;
 }
-function cc() { return cur.chars[cur.idx]; }
+let sandbox = null;                       // practice mode: throwaway copies of the word's characters, never marked
+function cc() { return (sandbox || cur.chars)[cur.idx]; }
 function wordDone() { return cur.chars.every(c => c.state === "ok" || c.state === "skip"); }
 
 /* size the writing box to the room that is left, so the whole screen fits without scrolling */
@@ -1244,7 +1285,7 @@ function fit() {
   if ($("practice").hidden || $("card").hidden) return;
   const wrap = $("board-wrap"), fb = $("feedback");
   wrap.style.flex = ""; fb.style.flexGrow = "";                 // measure the room with the box taking all of it
-  const s = Math.max(120, Math.floor(Math.min(wrap.clientHeight, wrap.clientWidth)));
+  const s = Math.max(80, Math.floor(Math.min(wrap.clientHeight, wrap.clientWidth)));
   $("board").style.width = $("board").style.height = s + "px";
   wrap.style.flex = `0 0 ${s}px`; fb.style.flexGrow = "1";     // any height the box can't use goes to the feedback
 }
@@ -1257,6 +1298,7 @@ function loadWord() {
   const it = pool[qi];
   cur = cache.get(it);
   if (!cur) { cur = makeWord(it); cache.set(it, cur); }
+  sandbox = null; syncPracticeUI();                              // each word opens in the real, marked mode
   const c = cc();
   renderPrompt(); renderTabs();
   renderBoard(statusFor(c));
@@ -1286,7 +1328,7 @@ function renderTabs() {
   const box = $("tabs");
   box.replaceChildren();
   box.hidden = cur.chars.length < 2;
-  cur.chars.forEach((c, i) => {
+  (sandbox || cur.chars).forEach((c, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "tab"; b.setAttribute("role", "tab");
     b.setAttribute("aria-selected", String(i === cur.idx));
@@ -1300,7 +1342,77 @@ function renderTabs() {
     });
     box.append(b);
   });
+  renderChart();
 }
+
+/* ---------- practice mode: the stroke-order chart and a sandbox that checks each stroke ---------- */
+function renderChart() {
+  const box = $("chart");
+  box.hidden = !sandbox;
+  if (!sandbox) return;
+  const c = cc(), ref = c.ref;
+  box.replaceChildren();
+  const h = document.createElement("div");
+  h.className = "chart-h";
+  h.innerHTML = `<span class="label">Stroke order</span><span class="hz"></span><span></span>`;
+  h.children[1].textContent = c.ch;
+  h.children[2].textContent = ref ? `${ref.length} stroke${ref.length === 1 ? "" : "s"}` : "";
+  box.append(h);
+  if (!ref) {
+    const p = document.createElement("p"); p.className = "chart-none";
+    p.textContent = `There is no stroke data for ${c.ch}.`; box.append(p); return;
+  }
+  const grid = document.createElement("div");
+  grid.className = "chart-grid";
+  box.append(grid);
+  // the step you are on: one past the strokes already written
+  const next = c.state === "ok" ? 0 : hasHole(c) >= 0 ? hasHole(c) + 1
+    : c.state === "issue" ? c.strokes.length                       // the stroke that just went wrong
+    : Math.min(c.strokes.length + 1, ref.length);
+  // the chart keeps to one row on a phone and two beside the box: the whole character,
+  // then as many steps as fit, starting just before the one you are on
+  let from = 1, to = ref.length;
+  const narrow = matchMedia("(max-width: 859px)").matches, cell = narrow ? 38 : 50, gap = narrow ? 4 : 6;
+  const room = Math.max(4, Math.floor((grid.clientWidth + gap) / (cell + gap))) * (narrow ? 1 : 2);
+  if (ref.length + 1 > room) {
+    from = clamp(1, ref.length - room + 2, next - 1);
+    to = from + room - 2;
+    h.children[2].textContent = `steps ${from}–${to} of ${ref.length}`;
+  }
+  // square 0 is the whole character; square k adds stroke k in red, with a dot where the pen starts
+  for (let k = 0; k <= to; k++) {
+    if (k && k < from) continue;
+    const svg = mk("svg", { class: "chart-cell" + (k ? "" : " full") + (k === next ? " next" : ""), viewBox: "0 0 100 100", role: "img",
+      "aria-label": k ? `Stroke ${k}: a ${strokeKind(ref[k - 1])}` : `${c.ch}, all ${ref.length} strokes` });
+    svg.append(mk("line", { class: "cg", x1: 50, y1: 3, x2: 50, y2: 97 }), mk("line", { class: "cg", x1: 3, y1: 50, x2: 97, y2: 50 }),
+      mk("line", { class: "cg soft", x1: 3, y1: 3, x2: 97, y2: 97 }), mk("line", { class: "cg soft", x1: 97, y1: 3, x2: 3, y2: 97 }));
+    const g = mk("g", { transform: `scale(${100 / BOX})` });
+    const upto = k ? k : ref.length;
+    for (let i = 0; i < upto; i++) g.append(mk("path", { class: "cs" + (k && i === k - 1 ? " new" : ""), d: smooth(ref[i]) }));
+    if (k) g.append(mk("circle", { class: "cs-dot", cx: ref[k - 1][0][0], cy: ref[k - 1][0][1], r: 58 }));
+    svg.append(g);
+    if (k) svg.append(mk("text", { class: "cn", x: 6, y: 19 }, String(k)));
+    grid.append(svg);
+  }
+}
+window.addEventListener("resize", () => { if (sandbox) renderChart(); });
+function syncPracticeUI() {
+  const on = !!sandbox;
+  $("frame").toggleAttribute("data-practice", on);
+  $("prac").setAttribute("aria-pressed", String(on));
+  $("prac").textContent = on ? "Exit practice" : "Practice mode";
+}
+function setPractice(on) {
+  if (!cur || sliding || $("card").hidden) return;
+  if (demoing) endDemo();
+  sandbox = on ? makeWord(cur.it).chars : null;
+  syncPracticeUI();
+  const c = cc();
+  renderBoard(statusFor(c));
+  setFeedback(c.last ? c.last.kind : "idle", c.last);
+  afterChange();
+}
+$("prac").addEventListener("click", () => setPractice(!sandbox));
 function updateNav() {
   const k = stOf(cur.it);
   $("progress").innerHTML = `Word ${qi + 1} of ${pool.length}` +
@@ -1463,7 +1575,7 @@ function endStroke(e) {
   const s = d.stroke;
   if (s.length === 1) s.push([s[0][0] + 1, s[0][1] + 1]);
   renderBoard();
-  if (opts.learn) runCheck(true);
+  if (opts.learn || sandbox) runCheck(true);
 }
 board.addEventListener("pointerup", endStroke);
 board.addEventListener("pointercancel", endStroke);
@@ -1528,6 +1640,7 @@ function setFeedback(kind, v, keepHeight) {
   if (!v) {
     const c = cur && cc();
     if (c && c.state === "skip") { add("p", `There is no stroke data for ${c.ch}, so it is skipped. Use Next word, or mark it and move on.`, "muted"); return; }
+    if (sandbox) { add("p", "Practice: copy the chart one stroke at a time. Each stroke is checked as you write it. Clear starts over, and nothing here counts toward your marks.", "muted"); return; }
     add("p", "Write one stroke at a time, top to bottom and left to right. Press Check when you are done. Stuck? Help draws the next stroke for you." +
       (opts.learn ? " Learning mode is on, so each stroke is checked as you write it." : ""), "muted");
     return;
@@ -1559,7 +1672,7 @@ function setFeedback(kind, v, keepHeight) {
     }
   }
   if (v.more) add("p", `…and ${v.more} more.`, "muted more");
-  if (v.extra) add("p", v.extra, "muted");
+  if (v.extra) add("p", v.extra, "muted extra");
   const canFix = v.fix && v.fix.wrong.length && !demoing;
   if (canFix && !v.postDemo) add("p", "Tap any stroke on the board to erase just that one.", "muted tip");
   if (pg || canFix || (v.postDemo && !demoing)) {                // the note arrows share a row with the buttons
@@ -1699,7 +1812,18 @@ function runCheck(auto, note) {
   if (auto && v.kind === "ok" && !complete) v = Object.assign({}, v, { title: `Stroke ${c.strokes.length} looks right` });
   c.last = v;
   c.state = complete ? "ok" : v.kind === "ok" ? "idle" : "issue";
-  if (complete) {
+  if (sandbox) {                                                 // practice: short notes, nothing is marked
+    if (complete) {
+      c.trace = null;
+      const nxt = sandbox.findIndex((x, i) => i > cur.idx && x.state !== "ok" && x.state !== "skip");
+      v = Object.assign({}, v, { title: "Good", lead: `All ${c.ref.length} strokes, in the right order and direction.`,
+        extra: nxt >= 0 ? `Next: character ${nxt + 1}. Tap its number above.` : "Clear to write it again, or Exit practice to try it for real." });
+      c.last = v;
+    } else if (v.kind !== "ok") {
+      v = Object.assign({}, v, { extra: "Undo that stroke and try it again, or Clear to start over." });
+      c.last = v;
+    }
+  } else if (complete) {
     if (!c.helped && !c.flagged && c.checks <= 1) c.firstOk = true;
     c.trace = null;
     const extras = [];
@@ -1824,6 +1948,7 @@ $("g-still").addEventListener("click", () => grade("learning"));
 $("prev").addEventListener("click", () => go(qi - 1));
 $("next").addEventListener("click", () => go(qi + 1));
 function finish() {
+  sandbox = null; syncPracticeUI();
   $("card").hidden = true; $("finished").hidden = false;
   $("progress").textContent = `${pool.length} of ${pool.length}`;
   $("g-undo2").hidden = !marks.length;
@@ -1911,6 +2036,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "Enter" && !onButton) { e.preventDefault(); $("check").click(); }
   else if (e.key === "Backspace") { e.preventDefault(); undo(); }
   else if (e.key === "h" || e.key === "H") { e.preventDefault(); help(); }
+  else if (e.key === "p" || e.key === "P") { e.preventDefault(); setPractice(!sandbox); }
   else if (e.key === "ArrowLeft") { e.preventDefault(); grade("learning"); }
   else if (e.key === "ArrowRight") { e.preventDefault(); grade("known"); }
   else if (e.key === "Escape" && !$("opts").hidden) { $("opt-btn").click(); }
