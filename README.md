@@ -57,6 +57,19 @@ Tip: the easiest way to produce a new set is to paste your Quizlet list to Claud
 
 Study progress is saved in each visitor's browser under each set's `id` and each card's `id`, so adding sets or correcting a card never resets anyone's progress. Never rename an existing set's `id` or renumber its cards. Anyone can clear their own progress with **Reset progress** (end of a run, Options, or the deck list).
 
+## Adding context notes
+
+Usage notes for a word live in `mandarin/data/context.js`, keyed by the word exactly as it appears on a card. A card shows a small **context** tag only when it has an entry, in study mode and in the word list:
+
+```js
+"吃": {
+  "notes": ["One short paragraph per idea."],
+  "examples": [{"hz":"你吃饭了吗？","py":"Nǐ chī fàn le ma?","en":"Have you eaten?"}]
+},
+```
+
+If a word in your notes isn't in any deck yet, add it as a new card at the end of the deck it fits, with the next unused `id`. Bump `data/context.js?v=` in `mandarin/index.html` after editing.
+
 ## Previewing locally
 
 Open `index.html` directly in a browser, or run any static server from this folder, for example `npx serve` or VS Code's Live Server.

@@ -201,15 +201,30 @@
   }
   .field { display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: var(--muted); font-variant-caps: all-small-caps; letter-spacing: .1em; }
   .field select { font-variant-caps: normal; letter-spacing: 0; width: 100%; }
-  .opt-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .opt-row > * { flex: 1 1 0; }
+  .opt-row { display: flex; flex-direction: column; gap: 8px; }
   .chip { position: relative; padding-left: 32px; text-align: left; white-space: nowrap; }
   .chip::before {
     content: ""; position: absolute; left: 11px; top: 50%; width: 13px; height: 13px; margin-top: -6.5px;
     border: 1.5px solid var(--faint); border-radius: 2px;
   }
   .chip[aria-pressed="true"]::before { background: var(--btn); border-color: var(--btn); box-shadow: inset 0 0 0 2px var(--surface); }
-  .opt-foot { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--line); }
+  .opt-foot { display: flex; gap: 8px; align-items: center; padding-top: 12px; border-top: 1px solid var(--line); }
+  .opt-foot .btn.subtle { margin-left: auto; }
+
+  /* the small "context" tag on cards and word-list rows */
+  .tag-right { display: inline-flex; align-items: center; gap: 10px; }
+  .ctx-btn {
+    font: inherit; font-size: 15px; font-variant-caps: all-small-caps; letter-spacing: .1em; line-height: 1.45;
+    color: var(--ink); background: var(--red-wash); border: 1px solid var(--grid); border-radius: 3px;
+    padding: 0 7px 1px; cursor: pointer;
+  }
+  .ctx-btn:hover { border-color: var(--red); color: var(--red); }
+  .ctx-head { display: flex; align-items: baseline; gap: 6px 14px; flex-wrap: wrap; }
+  .ctx-hz { font-family: var(--han); font-size: 30px; line-height: 1.2; }
+  .ctx-py { color: var(--muted); font-size: 18px; }
+  .ctx-en { font-size: 17px; }
+  .ctx-note { margin: 0; font-size: 17px; line-height: 1.55; }
+  .row-tags { display: inline-flex; align-items: center; gap: 10px; justify-content: flex-end; }
 
   /* ---------- the card ---------- */
   .stage { perspective: 1400px; display: flex; }
@@ -278,10 +293,8 @@
   .py-line { font-size: 19px; letter-spacing: .01em; display: flex; flex-wrap: wrap; justify-content: center; gap: 0 8px; }
   .py-line.lead { font-size: 27px; font-weight: 500; }
   .py-sep { color: var(--faint); }
-  .en-reveal { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .en-sub { font-size: 23px; font-weight: 500; line-height: 1.35; text-wrap: balance; }
-  .reveal { font-size: 16px; color: var(--muted); background: none; border: 1px dashed var(--faint); padding: 8px 20px; }
-  .reveal:hover { color: var(--ink); border-style: solid; border-color: var(--ink); }
+  .en-front { font-size: clamp(27px, 6.5vw, 36px); font-weight: 500; line-height: 1.3; text-wrap: balance; }
   .ex { font-size: 16px; color: var(--muted); }
   .ex .exhz { font-family: var(--han); font-size: 18px; color: var(--ink); }
   .note { font-size: 15.5px; color: var(--muted); background: var(--surface-2); border-radius: 4px; padding: 10px 12px; border-left: 3px solid var(--red); }
@@ -415,7 +428,7 @@
     .practice-hz { flex: none; }
     .word-row { grid-template-columns: 1fr auto; grid-template-areas: "hz pill" "py py" "en en"; row-gap: 4px; }
     .word-row .hz { grid-area: hz; }
-    .word-row .pill { grid-area: pill; justify-self: end; }
+    .word-row .row-tags { grid-area: pill; justify-self: end; }
     .word-row .py-line { grid-area: py; }
     .word-row .en { grid-area: en; }
   }
@@ -499,10 +512,11 @@
             <label class="field"><span>Category</span><select id="cat"></select></label>
             <label class="field"><span>Cards</span><select id="chunk"></select></label>
             <div class="opt-row">
-              <button class="chip" id="t-py" type="button" aria-pressed="true">Pinyin on front</button>
-              <button class="chip" id="t-shuffle" type="button" aria-pressed="false">Shuffle</button>
+              <button class="chip" id="t-en" type="button" aria-pressed="false">English on front</button>
+              <button class="chip" id="t-py" type="button" aria-pressed="true">Show pinyin</button>
             </div>
             <div class="opt-foot">
+              <button class="chip" id="t-shuffle" type="button" aria-pressed="false">Shuffle</button>
               <button class="btn" id="legend-btn" type="button">Legend</button>
               <button class="btn subtle" id="reset-btn" type="button">Reset progress</button>
             </div>
@@ -537,6 +551,7 @@
 <!-- Deck data lives in data/ so new sets can be added without touching the app code. -->
 <script src="data/sets.js?v=2"></script>
 <script src="data/chars.js?v=2"></script>
+<script src="data/context.js?v=1"></script>
 <script>
 const KEY = "mandarin-app-progress-v1";   // never rename: everyone's saved progress lives under this key
 const HAN = /[一-鿿]/;
@@ -584,6 +599,56 @@ function titleNodes(title) {
   return [h, document.createTextNode(m[2])];
 }
 
+/* ---------- context notes (data/context.js) ---------- */
+// Notes are keyed by the word exactly as written on a card, so a word in several decks shares them.
+// A two-form card ("这儿／这里") picks up notes filed under either form.
+const CTX = typeof CONTEXT !== "undefined" ? CONTEXT : {};
+
+function contextFor(card) {
+  const keys = [...new Set([card.hz, ...card.hz.split(ALT)])];
+  return keys.filter(k => CTX[k]).map(k => ({ word: k, entry: CTX[k] }));
+}
+
+function contextBtn(card, notes) {
+  const b = el("button", "ctx-btn", "context");
+  b.type = "button";
+  b.setAttribute("aria-label", "Context notes for " + card.hz);
+  b.addEventListener("click", ev => { ev.stopPropagation(); openContext(card, notes); });
+  return b;
+}
+
+function openContext(card, notes) {
+  openSheet(sheet => {
+    sheetHead(sheet, "Context");
+    const head = el("div", "ctx-head");
+    const hz = el("span", "ctx-hz", card.hz);
+    hz.lang = "zh-Hans";
+    head.append(hz, el("span", "ctx-py", card.py), el("span", "ctx-en", card.en));
+    sheet.append(head);
+    notes.forEach(({ word, entry }) => {
+      if (notes.length > 1) {
+        const h = el("h4", null, word);
+        h.lang = "zh-Hans";
+        sheet.append(h);
+      }
+      (entry.notes || []).forEach(text => sheet.append(el("p", "ctx-note", text)));
+      if (entry.examples && entry.examples.length) {
+        sheet.append(el("h4", null, "In a sentence"));
+        entry.examples.forEach(x => {
+          const box = el("div", "sent");
+          const line = el("div", "shz", x.hz);
+          line.lang = "zh-Hans";
+          box.append(line);
+          if (x.py) box.append(el("div", "spy", x.py));
+          if (x.en) box.append(el("div", "sen", x.en));
+          box.append(speakBtn(x.hz));
+          sheet.append(box);
+        });
+      }
+    });
+  }, "Context for " + card.hz);
+}
+
 // 1 -> 一, 12 -> 十二, 25 -> 二十五 (deck numbers)
 function cnNum(n) {
   const d = "一二三四五六七八九";
@@ -601,8 +666,8 @@ let cardEl = null, flipBtn = null;
 
 const state = {
   set: null,
-  revealEn: false,
-  showPy: true,
+  showPy: true,           // pinyin under the characters, wherever they show
+  enFront: false,         // English on the front instead of the characters
   mode: "all",
   chunk: "all",
   cat: "all",
@@ -621,13 +686,14 @@ try {
       allStatus = saved.status || {};
       orders = saved.orders || {};
       if (typeof saved.showPy === "boolean") state.showPy = saved.showPy;
+      if (typeof saved.enFront === "boolean") state.enFront = saved.enFront;
     }
   }
 } catch (e) { /* private window or blocked storage — run without it */ }
 
 function save() {
   try {
-    localStorage.setItem(KEY, JSON.stringify({ status: allStatus, orders: orders, showPy: state.showPy }));
+    localStorage.setItem(KEY, JSON.stringify({ status: allStatus, orders: orders, showPy: state.showPy, enFront: state.enFront }));
   } catch (e) { /* ignore */ }
 }
 
@@ -665,7 +731,9 @@ function deck() {
     return true;
   });
   // the permutation is fixed per deck, so grading a card never reorders the rest
-  if (rank) out.sort((a, b) => rank.get(a.id) - rank.get(b.id));
+  // cards added to a deck after it was shuffled go at the end, in id order
+  const pos = c => rank.has(c.id) ? rank.get(c.id) : 1e9 + c.id;
+  if (rank) out.sort((a, b) => pos(a) - pos(b));
   return out;
 }
 
@@ -763,50 +831,46 @@ function render() {
 
   const card = d[state.i];
   const st = statusOf(card.id);
-  state.revealEn = false;
+  const notes = contextFor(card);
 
   const wrap = el("div", "card" + (state.flipped ? " flipped" : ""));
 
-  /* front */
+  // top row of either face: category on the left; context tag (when there are notes) and status on the right
+  const faceTag = rightLabel => {
+    const tag = el("div", "face-tag");
+    const right = el("span", "tag-right");
+    if (notes.length) right.append(contextBtn(card, notes));
+    right.append(rightLabel);
+    tag.append(el("span", "cat-tag", card.cat), right);
+    return tag;
+  };
+  // the characters, with pinyin under them when Show pinyin is on
+  const chinese = () => {
+    const parts = [renderHanzi(card)];
+    if (state.showPy) parts.push(renderPinyin(card));
+    return parts;
+  };
+
+  /* front: the characters, or the English when English on front is on */
   const front = el("div", "face front");
-  const ftag = el("div", "face-tag");
-  ftag.append(el("span", "cat-tag", card.cat));
-  ftag.append(el("span", "pill " + st, st === "unseen" ? "new" : st === "learning" ? "learning" : "known"));
   const fbody = el("div", "face-body");
-  fbody.append(renderHanzi(card));
-  if (state.showPy) fbody.append(renderPinyin(card));
-  front.append(ftag, fbody, speakBtn(card.hz));
+  if (state.enFront) fbody.append(el("div", "en-front", card.en));
+  else fbody.append(...chinese());
+  front.append(faceTag(el("span", "pill " + st, st === "unseen" ? "new" : st === "learning" ? "learning" : "known")), fbody);
+  if (!state.enFront) front.append(speakBtn(card.hz));   // no audio hint while the English is the question
   wrap.append(front);
 
-  /* back */
+  /* back: always the whole card, with nothing hidden: characters, pinyin, then English */
   const back = el("div", "face back");
-  const btag = el("div", "face-tag");
-  btag.append(el("span", "cat-tag", card.cat), el("span", null, "answer"));
-  back.append(btag);
   const bbody = el("div", "face-body");
-  const lead = renderPinyin(card);
-  lead.classList.add("lead");
-  bbody.append(lead);
+  bbody.append(...chinese(), el("div", "en-sub", card.en));
   if (card.kind === "pattern" && card.pattern) bbody.append(el("div", "ex", card.pattern));
   if (card.ex) {
     const e = el("div", "ex");
     e.append(el("div", "exhz", card.ex));
     bbody.append(e);
   }
-  const enWrap = el("div", "en-reveal");
-  const showEnglish = () => {
-    state.revealEn = true;
-    enWrap.replaceChildren(el("div", "en-sub", card.en));
-  };
-  if (state.revealEn) showEnglish();
-  else {
-    const rb = el("button", "btn reveal", "Show English");
-    rb.type = "button";
-    rb.addEventListener("click", ev => { ev.stopPropagation(); showEnglish(); });
-    enWrap.append(rb);
-  }
-  bbody.append(enWrap);
-  back.append(bbody, speakBtn(card.hz));
+  back.append(faceTag(el("span", null, "answer")), bbody, speakBtn(card.hz));
   wrap.append(back);
 
   stage.append(wrap);
@@ -817,7 +881,7 @@ function render() {
   const learn = el("button", "act learn", "Still learning");
   learn.type = "button";
   learn.addEventListener("click", () => grade("learning"));
-  const flip = el("button", "act flip", state.flipped ? "Show Chinese" : "Flip");
+  const flip = el("button", "act flip", state.flipped ? "Flip back" : "Flip");
   flip.type = "button";
   flip.addEventListener("click", doFlip);
   flipBtn = flip;
@@ -965,7 +1029,7 @@ function updateBar() {
 
   // a dot on Options whenever something in it changes what you see
   document.getElementById("opts").classList.toggle("on",
-    state.cat !== "all" || state.chunk !== "all" || isShuffled() || !state.showPy);
+    state.cat !== "all" || state.chunk !== "all" || isShuffled() || !state.showPy || state.enFront);
 }
 
 /* ---------- actions ---------- */
@@ -973,7 +1037,7 @@ function doFlip() {
   if (!cardEl) return;
   state.flipped = !state.flipped;
   cardEl.classList.toggle("flipped", state.flipped);
-  if (flipBtn) flipBtn.textContent = state.flipped ? "Show Chinese" : "Flip";
+  if (flipBtn) flipBtn.textContent = state.flipped ? "Flip back" : "Flip";
   closePop();
 }
 
@@ -1228,6 +1292,12 @@ function openLegend() {
     sheet.append(sg);
     sheet.append(el("div", "ex", "The bar under the title uses the same colors, scoped to whatever filter is on."));
 
+    sheet.append(el("h4", null, "Front and back"));
+    sheet.append(el("div", "ex", "The front shows the characters, or the English if English on front is on in Options. The back always shows the whole card: the characters, the pinyin and the English. Show pinyin puts the pinyin under the characters on whichever side they appear."));
+
+    sheet.append(el("h4", null, "Context notes"));
+    sheet.append(el("div", "ex", "Some words carry a small context tag at the top of the card and in the word list. Tap it for notes on how the word is used, with example sentences."));
+
     sheet.append(el("h4", null, "Categories and sections"));
     sheet.append(el("div", "ex", "Every card carries a category, shown in red at the top of the card. Open Options to study one category, or one set of 25 cards, at a time."));
 
@@ -1327,17 +1397,28 @@ const catSel = document.getElementById("cat");
 const chunkSel = document.getElementById("chunk");
 const shuffleBtn = document.getElementById("t-shuffle");
 const pyBtn = document.getElementById("t-py");
+const enBtn = document.getElementById("t-en");
 
+// syncPy keeps both front-of-card switches in step with the saved settings
 function syncPy() {
   pyBtn.setAttribute("aria-pressed", String(state.showPy));
-  pyBtn.textContent = "Pinyin on front";
-  pyBtn.title = state.showPy
-    ? "Tap to hide pinyin on the front of the card"
-    : "Tap to show pinyin on the front of the card";
+  pyBtn.textContent = "Show pinyin";
+  pyBtn.title = state.showPy ? "Hide the pinyin under the characters" : "Show pinyin under the characters";
+  enBtn.setAttribute("aria-pressed", String(state.enFront));
+  enBtn.textContent = "English on front";
+  enBtn.title = state.enFront ? "Put the characters back on the front" : "Put the English on the front of the card";
 }
 
 pyBtn.addEventListener("click", () => {
   state.showPy = !state.showPy;
+  syncPy();
+  save();
+  render();
+});
+
+enBtn.addEventListener("click", () => {
+  state.enFront = !state.enFront;
+  state.flipped = false;
   syncPy();
   save();
   render();
@@ -1489,7 +1570,11 @@ function renderList() {
       row.append(renderHanzi(card), renderPinyin(card), el("span", "en", card.en));
       const v = st[card.id];
       const label = v === "known" ? "known" : v === "learning" ? "learning" : "new";
-      row.append(el("span", "pill " + (v || "unseen"), label));
+      const tags = el("span", "row-tags");
+      const notes = contextFor(card);
+      if (notes.length) tags.append(contextBtn(card, notes));
+      tags.append(el("span", "pill " + (v || "unseen"), label));
+      row.append(tags);
       rows.append(row);
     }
     section.append(rows);
