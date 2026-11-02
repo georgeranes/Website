@@ -549,20 +549,22 @@
 </div>
 
 <!-- Deck data lives in data/ so new sets can be added without touching the app code. -->
-<script src="data/sets.js?v=2"></script>
-<script src="data/chars.js?v=2"></script>
-<script src="data/context.js?v=1"></script>
+<script src="data/sets.js?v=3"></script>
+<script src="data/chars.js?v=3"></script>
+<script src="data/context.js?v=2"></script>
 <script>
 const KEY = "mandarin-app-progress-v1";   // never rename: everyone's saved progress lives under this key
 const HAN = /[一-鿿]/;
 const ALT = /\s*[\/／]\s*/;                // a card can offer two forms, written "这儿／这里"
 
-// A set may leave out "cats"; they're then counted from its cards, in first-seen order.
+// Category counts always come from the cards themselves, so adding or moving a card never leaves them
+// stale. A set's "cats" list, when present, only fixes the order; new categories follow, first-seen.
 SETS.forEach(set => {
-  if (set.cats) return;
   const counts = new Map();
   set.cards.forEach(c => counts.set(c.cat, (counts.get(c.cat) || 0) + 1));
-  set.cats = [...counts];
+  const order = (set.cats || []).map(([name]) => name).filter(name => counts.has(name));
+  counts.forEach((n, name) => { if (!order.includes(name)) order.push(name); });
+  set.cats = order.map(name => [name, counts.get(name)]);
 });
 
 // Make every multi-character word in the decks show up in its characters' Words tab, marked
