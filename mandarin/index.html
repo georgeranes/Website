@@ -746,27 +746,56 @@ const el = (tag, cls, text) => {
 };
 
 /* ---------- speech ---------- */
-let zhVoice = null;
+// Listen uses the browser's built-in voices. Many browsers (and plain Windows) have no Mandarin voice,
+// and an English voice handed Chinese text plays nothing at all, so look for a Mandarin voice and say
+// so clearly when there isn't one instead of failing silently.
+const canSpeak = "speechSynthesis" in window;
+let zhVoice = null, voicesLoaded = false, lastUtterance = null;
+
 function pickVoice() {
-  if (!("speechSynthesis" in window)) return;
+  if (!canSpeak) return;
   const vs = speechSynthesis.getVoices();
-  zhVoice = vs.find(v => /^zh[-_]?(CN|Hans)/i.test(v.lang))
-         || vs.find(v => /^zh/i.test(v.lang)) || null;
+  if (vs.length) voicesLoaded = true;
+  const mandarin = vs.filter(v => /^(zh|cmn)/i.test(v.lang) && !/HK|yue|canton/i.test(v.lang + " " + v.name));
+  zhVoice = mandarin.find(v => /CN|Hans/i.test(v.lang)) || mandarin[0] || null;
 }
-if ("speechSynthesis" in window) {
+if (canSpeak) {
   pickVoice();
   speechSynthesis.addEventListener("voiceschanged", pickVoice);
 }
+
 function speak(text) {
-  if (!("speechSynthesis" in window)) return;
+  if (!canSpeak) { noVoiceNotice(); return; }
+  pickVoice();
+  if (voicesLoaded && !zhVoice) { noVoiceNotice(); return; }
+  const u = new SpeechSynthesisUtterance(text.replace(/\s*[\/／]\s*/g, "，").replace(/…/g, ""));   // read "A／B" as two words
+  u.lang = "zh-CN";
+  if (zhVoice) u.voice = zhVoice;
+  u.rate = 0.85;
+  lastUtterance = u;                       // keep a reference: Chrome can drop an utterance that gets garbage-collected
   try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text.replace(/\s*[\/／]\s*/g, "，"));   // read "A／B" as two words
-    u.lang = "zh-CN";
-    if (zhVoice) u.voice = zhVoice;
-    u.rate = 0.85;
-    speechSynthesis.speak(u);
-  } catch (e) { /* ignore */ }
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      speechSynthesis.cancel();
+      setTimeout(() => speechSynthesis.speak(u), 60);   // Chrome can swallow a speak() made right after cancel()
+    } else {
+      speechSynthesis.resume();            // Chrome sometimes leaves the speech queue paused
+      speechSynthesis.speak(u);
+    }
+  } catch (e) { noVoiceNotice(); }
+}
+
+function noVoiceNotice() {
+  openSheet(sheet => {
+    sheetHead(sheet, "No Chinese voice on this device");
+    sheet.append(el("p", "ex", "Listen uses your browser’s built-in voices, and this browser doesn’t have a Mandarin one, so it can’t play any sound. Any of these fixes it:"));
+    const ul = el("ul", "sound-list");
+    [
+      "On a computer, open the flashcards in Google Chrome or Microsoft Edge. Both come with Mandarin voices.",
+      "On Windows, add one: Settings → Time & language → Speech → Add voices → Chinese (Simplified, China). Then restart your browser.",
+      "On an iPhone or Android phone, Mandarin voices are built in. Check that the volume is up.",
+    ].forEach(t => ul.append(el("li", null, t)));
+    sheet.append(ul);
+  }, "No Chinese voice on this device");
 }
 function speakBtn(text, label) {
   const b = el("button", "speak", "▶ " + (label || "Listen"));
